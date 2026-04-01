@@ -49,7 +49,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .brand h1{font-family:'Sora';font-size:24px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .brand-sub{font-family:'Sora';font-size:12px;color:var(--fg3);margin-top:2px;-webkit-text-fill-color:var(--fg3);}
 .hdr-r{display:flex;gap:8px;align-items:center;}
-.add-btn{padding:8px 18px;border-radius:10px;border:1px solid var(--accent);background:rgba(0,238,255,.08);color:var(--accent);cursor:pointer;font-size:13px;font-weight:600;font-family:'Sora';transition:all .2s;display:flex;align-items:center;gap:5px;}
+.add-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--accent);background:rgba(0,238,255,.08);color:var(--accent);cursor:pointer;font-size:22px;font-weight:400;font-family:'Sora';transition:all .2s;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 .add-btn:hover{background:rgba(0,238,255,.18);box-shadow:0 0 16px var(--accent-glow);transform:translateY(-1px);}
 .icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border2);background:var(--glass2);color:var(--fg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s;}
 .icon-btn:hover{background:var(--bg3);color:var(--fg);border-color:var(--accent);box-shadow:0 0 12px var(--accent-glow);}
@@ -80,7 +80,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 /* === OVERVIEW TABLE === */
 .ov-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .ov-t{width:100%;min-width:880px;border-collapse:collapse;}
-.ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:800;letter-spacing:-.01em;padding:16px 2px 12px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);}
+.ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:600;letter-spacing:-.01em;padding:16px 2px 12px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);}
 .ov-t thead th:first-child{text-align:left;padding-left:22px;min-width:170px;width:170px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);}
 .ov-t thead th .si{display:none;}
 .ov-t tbody tr{border-bottom:1px solid var(--border);transition:all .2s;}
@@ -150,7 +150,10 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .mob-badge{font-family:'Sora';font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;background:var(--active-bg);color:var(--active);border:1px solid var(--active-bd);white-space:nowrap;}
 .mob-tags{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap;}
 .mob-tag{font-size:9px;padding:2px 7px;border-radius:4px;background:var(--bg3);color:var(--fg3);}
-.mob-bar{display:flex;gap:2px;margin-bottom:10px;}
+.mob-bar-wrap{margin-bottom:10px;}
+.mob-labels{display:flex;gap:2px;margin-bottom:3px;}
+.mob-label{flex:1;text-align:center;font-family:'Sora';font-size:8px;color:var(--fg4);font-weight:600;white-space:nowrap;overflow:hidden;}
+.mob-bar{display:flex;gap:2px;}
 .mob-seg{flex:1;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:6px;font-weight:700;font-family:'Sora';text-transform:uppercase;position:relative;transition:all .15s;}
 .mob-seg:active{transform:scale(1.15);}
 .mob-seg.d.docs{background:var(--docs-bg);border:1px solid var(--docs-bd);color:var(--docs);}
@@ -351,7 +354,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   .dt{font-size:22px;}
   .sp{padding:22px 16px;}
   .se-r{grid-template-columns:1fr 70px 100px;}
-  .add-btn span{display:none;}
 }
 @media(max-width:480px){
   .hdr{flex-direction:column;align-items:flex-start;gap:12px;}
@@ -366,7 +368,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
       <div class="brand"><div class="brand-mark">N</div><div><h1>Novel Cockpit</h1><div class="brand-sub" id="stats"></div></div></div>
       <div class="hdr-r">
         <span id="sync-badge" style="font-family:Sora;font-size:10px;color:var(--fg4);margin-right:4px"></span>
-        <button class="add-btn" onclick="addNovel()">+ <span>Add Novel</span></button>
+        <button class="add-btn" onclick="addNovel()" title="새 작품 추가">+</button>
         <button class="icon-btn" id="thbtn" onclick="togTheme()" title="테마">🌙</button>
         <button class="icon-btn" onclick="openSet()" title="관리">⚙️</button>
       </div>
@@ -608,7 +610,7 @@ function R(){
   // Mobile Overview
   let mo='<div class="mob-ov">';
   ns.forEach(n=>{const dl=dli(n);const cs=S.find(x=>x.id===n.cs);const hasDir=!!n.dir;const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
-    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar">${S.map(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';if(info.s==='done')sc+=`d ${tc}`;else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+='p';const lb=info.s==='active'?'NOW':info.s==='blocked'?'BLK':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;}).join('')}</div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
+    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';if(info.s==='done')sc+=`d ${tc}`;else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+='p';const lb=info.s==='active'?'NOW':info.s==='blocked'?'BLK':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;}).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
   mo+='</div>';
   document.getElementById('ov-v').innerHTML=o+mo;
 
