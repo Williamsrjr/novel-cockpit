@@ -34,6 +34,7 @@
   --done:#059669;--done-bg:rgba(5,150,105,.08);
   --active:#d97706;--active-bg:rgba(217,119,6,.06);--active-bd:rgba(217,119,6,.2);
 }
+[data-theme="light"] .ov-t thead th{color:#000;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR','Sora',sans-serif;background:var(--bg0);color:var(--fg);min-height:100vh;-webkit-font-smoothing:antialiased;}
 /* Dot grid background */
@@ -79,9 +80,9 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 /* === OVERVIEW TABLE === */
 .ov-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .ov-t{width:100%;min-width:880px;border-collapse:collapse;}
-.ov-t thead th{font-family:'Sora';font-size:10px;color:var(--fg4);font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:16px 4px 12px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);}
-.ov-t thead th:first-child{text-align:left;padding-left:22px;min-width:170px;width:170px;}
-.ov-t thead th .si{display:block;font-size:14px;margin-bottom:3px;}
+.ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:800;letter-spacing:-.01em;padding:16px 2px 12px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);}
+.ov-t thead th:first-child{text-align:left;padding-left:22px;min-width:170px;width:170px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);}
+.ov-t thead th .si{display:none;}
 .ov-t tbody tr{border-bottom:1px solid var(--border);transition:all .2s;}
 .ov-t tbody tr:hover{background:rgba(0,238,255,.03);}
 .ov-t tbody tr:last-child{border-bottom:none;}
@@ -598,7 +599,7 @@ function R(){
   document.getElementById('stats').textContent=`${N.length} projects · ${ac} active`;
 
   // Desktop Overview
-  let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th><span class="si">${s.i}</span>${s.l}</th>`).join('')}</tr></thead><tbody>`;
+  let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
   ns.forEach(n=>{let rU='';S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){const u=uc(info.d);if(u==='uc'||u==='u3')rU='row-over';}});const dl=dli(n);const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';const hasDir=!!n.dir;
     o+=`<tr class="${rU}"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
     S.forEach(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let cc='c ';if(info.s==='done')cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;else if(info.s==='active')cc+=`a ${uc(info.d)}`;else if(info.s==='blocked')cc+='b';else cc+='p';let lb='';if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCK';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;});o+=`</tr>`;});
