@@ -364,6 +364,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <div class="hdr">
       <div class="brand"><div class="brand-mark">N</div><div><h1>Novel Cockpit</h1><div class="brand-sub" id="stats"></div></div></div>
       <div class="hdr-r">
+        <span id="sync-badge" style="font-family:Sora;font-size:10px;color:var(--fg4);margin-right:4px"></span>
         <button class="add-btn" onclick="addNovel()">+ <span>Add Novel</span></button>
         <button class="icon-btn" id="thbtn" onclick="togTheme()" title="테마">🌙</button>
         <button class="icon-btn" onclick="openSet()" title="관리">⚙️</button>
@@ -405,10 +406,105 @@ let N=[
   {id:6,title:"반찬가게",tags:["SF","문학","단편"],cs:"draft",len:"40매",sd:"2026-02-10",ed:"2026-05-15",dir:"#",links:{gdoc:"#",gdrive:"",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"세로토닌 BBB",d:""},structure:{s:"done",n:"에세이→르포",d:""},story:{s:"done",n:"은폐/착취",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"active",n:"초고 집필중",d:"2026-04-03"},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"W-Method",d:"평화→Hard SF",u:"#"}],up:"2026-03-22"},
 ];
 // localStorage persistence
+// ===== Google Sheets Integration =====
+const API_URL = 'https://script.google.com/macros/s/AKfycbwHhuswbM9MHEzrM0ECcS5pnzZB0Q-rUJUPil9pdTKTEyPZVWMRp_lio1fZ7gquD0iE/exec'; // ← 여기에 Apps Script 웹앱 URL 붙여넣기
+const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
+
 const DEFAULT_N=JSON.parse(JSON.stringify(N));
+// Load from localStorage first (instant)
 try{const saved=localStorage.getItem('nc_novels');if(saved)N=JSON.parse(saved);}catch(e){}
-function persist(){try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}}
+
+// Convert Sheets flat data → N[] format
+function sheetsToN(data){
+  const novels=data.novels.map(row=>({
+    id:row.id, title:row.title, tags:row.tags||[],
+    cs:row.cs, len:row.len, sd:row.sd, ed:row.ed, dir:row.dir,
+    links:{gdoc:row.gdoc||'',gdrive:row.gdrive||'',nc:row.nc||''},
+    sl:{}, st:{}, refs:[], up:row.up
+  }));
+  // Fill stages
+  novels.forEach(n=>{
+    S.forEach(s=>{n.sl[s.id]={u:'',t:''};n.st[s.id]={s:'pending',n:'',d:''};});
+    data.stages.filter(s=>s.novelId===n.id).forEach(s=>{
+      n.st[s.stageId]={s:s.status||'pending',n:s.note||'',d:s.due||''};
+      n.sl[s.stageId]={u:s.url||'',t:s.tool||''};
+    });
+    n.refs=data.refs.filter(r=>r.novelId===n.id).map(r=>({i:r.icon,n:r.name,d:r.desc,u:r.url}));
+  });
+  return novels;
+}
+
+// Convert N[] → Sheets flat format
+function nToSheets(novels){
+  const novelsFlat=novels.map(n=>({
+    id:n.id,title:n.title,tags:n.tags,cs:n.cs,len:n.len,sd:n.sd,ed:n.ed,dir:n.dir,
+    links:n.links,up:n.up
+  }));
+  const stages=[];
+  novels.forEach(n=>{
+    S.forEach(s=>{
+      const st=n.st[s.id]||{s:'pending',n:'',d:''};
+      const sl=n.sl[s.id]||{u:'',t:''};
+      stages.push({novelId:n.id,stageId:s.id,status:st.s,note:st.n,due:st.d,url:sl.u,tool:sl.t});
+    });
+  });
+  const refs=[];
+  novels.forEach(n=>{(n.refs||[]).forEach(r=>{refs.push({novelId:n.id,icon:r.i,name:r.n,desc:r.d,url:r.u});});});
+  return{novels:novelsFlat,stages,refs};
+}
+
+// Fetch from Sheets (async, updates after page load)
+let syncStatus='local'; // local | syncing | synced | error
+function updateSyncBadge(){
+  const el=document.getElementById('sync-badge');
+  if(!el)return;
+  const labels={local:'로컬',syncing:'동기화중…',synced:'✓ 동기화됨',error:'⚠ 오류'};
+  const colors={local:'var(--fg4)',syncing:'var(--active)',synced:'var(--done)',error:'var(--danger)'};
+  el.textContent=labels[syncStatus];el.style.color=colors[syncStatus];
+}
+
+async function loadFromSheets(){
+  if(!SHEETS_ENABLED)return;
+  syncStatus='syncing';updateSyncBadge();
+  try{
+    const res=await fetch(API_URL);
+    const data=await res.json();
+    if(data.error){syncStatus='error';updateSyncBadge();return;}
+    if(data.novels&&data.novels.length>0){
+      N=sheetsToN(data);
+      localStorage.setItem('nc_novels',JSON.stringify(N));
+      R();syncStatus='synced';
+    } else {
+      // Sheets empty — push current data
+      await saveToSheets();
+      syncStatus='synced';
+    }
+  }catch(e){syncStatus='error';}
+  updateSyncBadge();
+}
+
+async function saveToSheets(){
+  if(!SHEETS_ENABLED)return;
+  syncStatus='syncing';updateSyncBadge();
+  try{
+    const payload={action:'save_all',...nToSheets(N)};
+    await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    syncStatus='synced';
+  }catch(e){syncStatus='error';}
+  updateSyncBadge();
+}
+
+// Debounced save
+let saveTimer=null;
+function persist(){
+  try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}
+  if(SHEETS_ENABLED){
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(()=>saveToSheets(),1500); // 1.5초 후 저장 (연속 수정 대응)
+  }
+}
 function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합니까?')){N=JSON.parse(JSON.stringify(DEFAULT_N));persist();R();rSet();toast('초기화 완료');}}
+async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await loadFromSheets();rSet();toast('동기화 완료');}
 
 let cv="overview",at=new Set(),ex=new Set(),dk=true;
 try{const t=localStorage.getItem('nc_theme');if(t)dk=t==='dark';}catch(e){}
@@ -482,7 +578,7 @@ function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;persist();R();}
 function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;persist();R();rSet();}
 function rSet(){let h=`<div class="sp-h"><h2>⚙️ 관리</h2><button class="sp-x" onclick="closeSet()">✕</button></div><div class="sp-sec"><div class="sp-st">🎨 화면</div><div class="sp-row"><div><div class="sp-lbl">다크 모드</div></div><label class="tog"><input type="checkbox" ${dk?'checked':''} onchange="togTheme()"><span class="tog-s"></span></label></div></div><div class="sp-sec"><div class="sp-st">📋 작품 관리</div><table class="mt"><thead><tr><th>작품</th><th>현재</th><th>시작일</th><th>목표일</th><th></th></tr></thead><tbody>`;
   N.forEach(n=>{const cs=S.find(x=>x.id===n.cs);const isE=ex.has(n.id);h+=`<tr><td><span class="mt-t">${n.title}</span></td><td><span class="sdot ${n.st[n.cs].s}"></span> ${cs.l}</td><td><input type="date" class="mt-i" value="${n.sd}" onchange="uND(${n.id},'sd',this.value)"></td><td><input type="date" class="mt-i" value="${n.ed}" onchange="uND(${n.id},'ed',this.value)"></td><td><button class="eb" onclick="tExp(${n.id})">${isE?'접기':'▾'}</button></td></tr>`;if(isE){h+=`<tr><td colspan="5" style="padding:0 0 6px"><div class="se-w"><div class="se-r se-hd"><div>단계</div><div>상태</div><div>마감일</div></div>`;S.forEach(st=>{const info=n.st[st.id];h+=`<div class="se-r"><div class="se-n"><span class="sdot ${info.s}"></span>${st.i} ${st.l}</div><div><select class="se-sel" onchange="uSS(${n.id},'${st.id}',this.value)"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select></div><div><input type="date" class="se-di" value="${info.d||''}" onchange="uSD(${n.id},'${st.id}',this.value)"></div></div>`;});h+=`</div></td></tr>`;}});
-  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" checked><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl" style="color:var(--danger)">데이터 초기화</div><div class="sp-desc">모든 수정사항을 샘플 데이터로 리셋</div></div><button class="m-btn" style="background:var(--danger);color:#fff;padding:6px 14px;font-size:12px" onclick="resetData()">리셋</button></div></div>`;
+  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">☁️ Google Sheets 동기화</div><div class="sp-row"><div><div class="sp-lbl">상태</div><div class="sp-desc">${SHEETS_ENABLED?'연결됨 — '+API_URL.slice(0,50)+'…':'❌ 미설정 — HTML에서 API_URL을 설정하세요'}</div></div>${SHEETS_ENABLED?`<button class="m-btn m-ok" style="padding:6px 14px;font-size:12px" onclick="manualSync()">수동 동기화</button>`:''}</div></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" checked><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl" style="color:var(--danger)">데이터 초기화</div><div class="sp-desc">모든 수정사항을 샘플 데이터로 리셋</div></div><button class="m-btn" style="background:var(--danger);color:#fff;padding:6px 14px;font-size:12px" onclick="resetData()">리셋</button></div></div>`;
   document.getElementById('set-p').innerHTML=h;}
 
 // Detail
@@ -531,6 +627,8 @@ function R(){
 
 rp();R();
 if(!dk)document.getElementById('thbtn').textContent='☀️';
+updateSyncBadge();
+loadFromSheets();
 </script>
 </body>
 </html>
