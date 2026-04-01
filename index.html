@@ -93,6 +93,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .m-cancel{background:var(--bg4);color:var(--fg3);}
 .m-ok{background:var(--accent);color:#000;}
 .m-ok:hover{filter:brightness(1.1);}
+.m-danger{background:var(--danger);color:#fff;font-size:12px;padding:8px 14px;}
+.m-danger:hover{filter:brightness(1.1);}
+.m-tags-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
+.m-tag-cb{display:none;}
+.m-tag-label{padding:5px 12px;border-radius:100px;border:1px solid var(--border2);color:var(--fg3);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500;user-select:none;}
+.m-tag-cb:checked+.m-tag-label{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:600;}
 
 /* ===== OVERVIEW TABLE ===== */
 .ov-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;border:1px solid var(--border);background:var(--glass);backdrop-filter:blur(16px);}
@@ -349,7 +355,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div id="main-view">
     <div class="hdr">
       <div class="brand"><div class="brand-mark">N</div><div><h1>Cockpit <span>/ writing</span></h1><div class="brand-sub" id="stats"></div></div></div>
-      <div class="hdr-btns"><button class="hdr-btn" id="thbtn" onclick="togTheme()" title="테마">🌙</button><button class="hdr-btn" onclick="openSet()" title="관리">⚙️</button></div>
+      <div class="hdr-btns"><button class="hdr-btn" onclick="addNovel()" title="작품 추가" style="font-size:20px;font-weight:700">+</button><button class="hdr-btn" id="thbtn" onclick="togTheme()" title="테마">🌙</button><button class="hdr-btn" onclick="openSet()" title="관리">⚙️</button></div>
     </div>
     <div class="nav">
       <div class="nav-tabs"><button class="nav-t on" data-v="overview" onclick="sv('overview')">전체보기</button><button class="nav-t" data-v="works" onclick="sv('works')">작품별</button></div>
@@ -386,8 +392,16 @@ let N=[
   {id:6,title:"반찬가게",tags:["SF","문학","단편"],cs:"draft",len:"40매",sd:"2026-02-10",ed:"2026-05-15",dir:"#",links:{gdoc:"#",gdrive:"",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"세로토닌 BBB",d:""},structure:{s:"done",n:"에세이→르포",d:""},story:{s:"done",n:"은폐/착취",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"active",n:"초고 집필중",d:"2026-04-03"},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"W-Method",d:"평화→Hard SF",u:"#"}],up:"2026-03-22"},
 ];
 
+// localStorage persistence
+const DEFAULT_N=JSON.parse(JSON.stringify(N));
+try{const saved=localStorage.getItem('nc_novels');if(saved)N=JSON.parse(saved);}catch(e){}
+function persist(){try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}}
+function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합니까?')){N=JSON.parse(JSON.stringify(DEFAULT_N));persist();R();rSet();toast('초기화 완료');}}
+
 let cv="overview",at=new Set(),ex=new Set(),dk=true;
-const TD=new Date("2026-04-01");
+try{const t=localStorage.getItem('nc_theme');if(t)dk=t==='dark';}catch(e){}
+if(!dk)document.documentElement.setAttribute('data-theme','light');
+const TD=new Date();
 
 const si=id=>S.findIndex(x=>x.id===id);
 const gp=n=>Math.round(((si(n.cs)+.5)/S.length)*100);
@@ -399,7 +413,7 @@ function gf(){if(at.size===0)return N;return N.filter(n=>[...at].some(t=>n.tags.
 function tt(t){if(at.has(t))at.delete(t);else at.add(t);rp();R();}
 function sv(v){cv=v;document.querySelectorAll('.nav-t').forEach(b=>b.classList.toggle('on',b.dataset.v===v));document.getElementById('ov-v').classList.toggle('hidden',v!=='overview');document.getElementById('wk-v').classList.toggle('hidden',v!=='works');R();}
 function rp(){document.getElementById('pills').innerHTML=TAGS.map(t=>`<button class="pill ${at.has(t)?'on':''}" onclick="tt('${t}')">${t}</button>`).join('');}
-function togTheme(){dk=!dk;document.documentElement.setAttribute('data-theme',dk?'dark':'light');document.getElementById('thbtn').textContent=dk?'🌙':'☀️';}
+function togTheme(){dk=!dk;document.documentElement.setAttribute('data-theme',dk?'dark':'light');document.getElementById('thbtn').textContent=dk?'🌙':'☀️';try{localStorage.setItem('nc_theme',dk?'dark':'light');}catch(e){}}
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
 // === Context Menu ===
@@ -442,9 +456,9 @@ function hideCtx(){document.getElementById('ctx-menu').classList.add('hidden');}
 document.addEventListener('click',hideCtx);
 document.addEventListener('scroll',hideCtx,true);
 
-function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();R();const labels={pending:'대기',active:'진행중',done:'완료',blocked:'막힘'};toast(`${S.find(x=>x.id===ctxSid).l} → ${labels[s]}`);}
+function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();persist();R();const labels={pending:'대기',active:'진행중',done:'완료',blocked:'막힘'};toast(`${S.find(x=>x.id===ctxSid).l} → ${labels[s]}`);}
 function ctxMemo(){hideCtx();const n=N.find(x=>x.id===ctxNid);const info=n.st[ctxSid];const stage=S.find(x=>x.id===ctxSid);showModal(`<h3>✏️ 메모</h3><div class="sub">${n.title} — ${stage.l}</div><label>메모</label><textarea id="m-memo" placeholder="이 단계에 대한 메모...">${info.n||''}</textarea><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveMemo()">저장</button></div>`);}
-function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();R();toast('메모 저장됨');}
+function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();persist();R();toast('메모 저장됨');}
 function ctxOpen(){hideCtx();const n=N.find(x=>x.id===ctxNid);window.open(n.sl[ctxSid].u,'_blank');}
 function ctxCopy(){hideCtx();const n=N.find(x=>x.id===ctxNid);const url=n.sl[ctxSid].u;navigator.clipboard.writeText(url).then(()=>toast('URL 복사됨')).catch(()=>toast('복사 실패'));}
 function ctxEdit(){hideCtx();cellDbl(null,ctxNid,ctxSid);}
@@ -453,12 +467,38 @@ function ctxEdit(){hideCtx();cellDbl(null,ctxNid,ctxSid);}
 function showModal(h){document.getElementById('modal-bg').classList.remove('hidden');const m=document.getElementById('modal');m.classList.remove('hidden');m.innerHTML=h;}
 function closeModal(){document.getElementById('modal').classList.add('hidden');document.getElementById('modal-bg').classList.add('hidden');}
 
-function titleDbl(e,nid){if(e)e.preventDefault();e&&e.stopPropagation();const n=N.find(x=>x.id===nid);showModal(`<h3>📁 ${n.title}</h3><div class="sub">작품 폴더 · 시작일</div><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="${n.dir||''}" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${n.sd}"/><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveTitleEdit(${nid})">저장</button></div>`);}
-function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;closeModal();R();toast('저장됨');}
+function tagsCheckboxes(selected){return TAGS.map(t=>`<input type="checkbox" class="m-tag-cb" id="mt-${t}" value="${t}" ${selected.includes(t)?'checked':''}><label class="m-tag-label" for="mt-${t}">${t}</label>`).join('');}
+function getCheckedTags(){return TAGS.filter(t=>document.getElementById('mt-'+t)?.checked);}
+
+function titleDbl(e,nid){if(e)e.preventDefault();e&&e.stopPropagation();const n=N.find(x=>x.id===nid);showModal(`<h3>✏️ 작품 편집</h3><div class="sub">${n.title}</div>
+  <label>제목</label><input type="text" id="m-title" value="${n.title}"/>
+  <label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes(n.tags)}</div>
+  <label>분량</label><input type="text" id="m-len" value="${n.len}" placeholder="40매, 장편 등"/>
+  <label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="${n.dir||''}" placeholder="https://drive.google.com/drive/folders/..."/>
+  <label>시작일</label><input type="date" id="m-sd" value="${n.sd}"/>
+  <label>목표 완료일</label><input type="date" id="m-ed" value="${n.ed}"/>
+  <div class="m-btns" style="justify-content:space-between"><button class="m-btn m-danger" onclick="deleteNovel(${nid})">삭제</button><div style="display:flex;gap:8px"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveTitleEdit(${nid})">저장</button></div></div>`);}
+function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();persist();R();toast('저장됨');}
+function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();persist();R();toast('삭제됨');}
+
+function addNovel(){const newId=N.length?Math.max(...N.map(x=>x.id))+1:1;const today=new Date().toISOString().slice(0,10);
+  showModal(`<h3>➕ 새 작품 추가</h3><div class="sub">새 프로젝트를 시작합니다</div>
+  <label>제목</label><input type="text" id="m-title" value="" placeholder="작품 제목"/>
+  <label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes([])}</div>
+  <label>분량</label><input type="text" id="m-len" value="" placeholder="40매, 장편 등"/>
+  <label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="" placeholder="https://drive.google.com/drive/folders/..."/>
+  <label>시작일</label><input type="date" id="m-sd" value="${today}"/>
+  <label>목표 완료일</label><input type="date" id="m-ed" value=""/>
+  <div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveNewNovel(${newId})">추가</button></div>`);}
+function saveNewNovel(newId){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}
+  const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});
+  emptySt.ideation.s='active';
+  N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],up:new Date().toISOString().slice(0,10)});
+  closeModal();persist();R();toast(`"${title}" 추가됨`);}
 
 function cellDbl(e,nid,sid){if(e){e.preventDefault();e.stopPropagation();}const n=N.find(x=>x.id===nid);const info=n.st[sid];const stage=S.find(x=>x.id===sid);const sl=n.sl[sid];
   showModal(`<h3>${stage.i} ${stage.l}</h3><div class="sub">${n.title}</div><label>문서 URL</label><input type="url" id="m-url" value="${sl?sl.u:''}" placeholder="https://..."/><label>도구</label><div style="display:flex;gap:12px;margin-bottom:4px"><label style="font-size:12px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:4px;margin:0"><input type="radio" name="m-tool" value="gdoc" ${(!sl||!sl.t||sl.t==='gdoc'||sl.t==='gdrive')?'checked':''}> Docs</label><label style="font-size:12px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:4px;margin:0"><input type="radio" name="m-tool" value="nc" ${sl&&sl.t==='nc'?'checked':''}> NC</label></div><label>마감일</label><input type="date" id="m-due" value="${info.d||''}"/><label>상태</label><select id="m-status"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveCellEdit(${nid},'${sid}')">저장</button></div>`);}
-function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();R();toast('저장됨');}
+function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();R();toast('저장됨');}
 
 function titleClick(nid){const n=N.find(x=>x.id===nid);if(n.dir)window.open(n.dir,'_blank');}
 function cellClick(nid,sid){const n=N.find(x=>x.id===nid);const sl=n.sl[sid];if(sl&&sl.u)window.open(sl.u,'_blank');}
@@ -467,14 +507,14 @@ function cellClick(nid,sid){const n=N.find(x=>x.id===nid);const sl=n.sl[sid];if(
 function openSet(){document.getElementById('set-ov').classList.remove('hidden');document.body.style.overflow='hidden';rSet();}
 function closeSet(){document.getElementById('set-ov').classList.add('hidden');document.body.style.overflow='';}
 function tExp(id){if(ex.has(id))ex.delete(id);else ex.add(id);rSet();}
-function uSS(nid,sid,v){N.find(x=>x.id===nid).st[sid].s=v;recomp(N.find(x=>x.id===nid));rSet();R();}
-function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;R();}
-function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;R();rSet();}
+function uSS(nid,sid,v){N.find(x=>x.id===nid).st[sid].s=v;recomp(N.find(x=>x.id===nid));persist();rSet();R();}
+function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;persist();R();}
+function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;persist();R();rSet();}
 function rSet(){let h=`<div class="sp-h"><h2>⚙️ 관리</h2><button class="sp-x" onclick="closeSet()">✕</button></div><div class="sp-sec"><div class="sp-st">🎨 화면</div><div class="sp-row"><div><div class="sp-lbl">다크 모드</div></div><label class="tog"><input type="checkbox" ${dk?'checked':''} onchange="togTheme()"><span class="tog-s"></span></label></div></div><div class="sp-sec"><div class="sp-st">📋 작품 관리</div><table class="mt"><thead><tr><th>작품</th><th>현재</th><th>시작일</th><th>목표일</th><th></th></tr></thead><tbody>`;
   N.forEach(n=>{const cs=S.find(x=>x.id===n.cs);const isE=ex.has(n.id);h+=`<tr><td><span class="mt-t">${n.title}</span></td><td><span class="sdot ${n.st[n.cs].s}"></span> ${cs.l}</td><td><input type="date" class="mt-i" value="${n.sd}" onchange="uND(${n.id},'sd',this.value)"></td><td><input type="date" class="mt-i" value="${n.ed}" onchange="uND(${n.id},'ed',this.value)"></td><td><button class="eb" onclick="tExp(${n.id})">${isE?'접기':'▾'}</button></td></tr>`;
     if(isE){h+=`<tr><td colspan="5" style="padding:0 0 6px"><div class="se-w"><div class="se-r se-hd"><div>단계</div><div>상태</div><div>마감일</div></div>`;S.forEach(st=>{const info=n.st[st.id];h+=`<div class="se-r"><div class="se-n"><span class="sdot ${info.s}"></span>${st.i} ${st.l}</div><div><select class="se-sel" onchange="uSS(${n.id},'${st.id}',this.value)"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select></div><div><input type="date" class="se-di" value="${info.d||''}" onchange="uSD(${n.id},'${st.id}',this.value)"></div></div>`;});h+=`</div></td></tr>`;}
   });
-  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" checked><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox"><span class="tog-s"></span></label></div></div>`;
+  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" checked><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl" style="color:var(--danger)">데이터 초기화</div><div class="sp-desc">모든 수정사항을 샘플 데이터로 리셋</div></div><button class="m-btn" style="background:var(--danger);color:#fff;padding:6px 14px;font-size:12px" onclick="resetData()">리셋</button></div></div>`;
   document.getElementById('set-p').innerHTML=h;}
 
 // === Detail ===
@@ -482,7 +522,7 @@ function showDet(id){const n=N.find(x=>x.id===id);document.getElementById('main-
   let lk='';if(n.links.gdoc)lk+=`<a href="${n.links.gdoc}" target="_blank" class="d-lk docs">📄 Docs</a>`;if(n.links.gdrive)lk+=`<a href="${n.links.gdrive}" target="_blank" class="d-lk drive">📁 Drive</a>`;if(n.links.nc)lk+=`<a href="${n.links.nc}" target="_blank" class="d-lk nc">✒️ NC</a>`;
   let tl='';S.forEach((st,i)=>{const info=n.st[st.id];const isC=n.cs===st.id;const dc=info.s==='done'?'done':info.s==='blocked'?'blocked':isC?'active':'pending';const dot=info.s==='done'?'✓':info.s==='blocked'?'⊘':isC?st.i:(i+1);const lc=info.s==='done'?'done':'pending';const cc=isC?'as':info.s==='blocked'?'bs':info.s==='pending'?'ps':'';const stxt=info.s==='done'?'완료':info.s==='active'?'진행중':info.s==='blocked'?'막힘':'대기';const sl=n.sl[st.id];let tlk='';if(sl&&sl.u){const tc=sl.t==='nc'?'nc':'docs';tlk=`<a href="${sl.u}" target="_blank" class="tl-tl ${tc}">${sl.t==='nc'?'NC':'Docs'} →</a>`;}const dueI=info.d?` <span style="font-size:10px;color:var(--fg4);font-family:Outfit">📅${info.d}</span>`:'';tl+=`<div class="tl-i"><div class="tl-l"><div class="tl-d ${dc}">${dot}</div>${i<S.length-1?`<div class="tl-ln ${lc}"></div>`:''}</div><div class="tl-b ${cc}"><div class="tl-r"><span class="n">${st.l} ${tlk}${dueI}</span><span class="st ${info.s}">${stxt}</span></div>${info.n?`<div class="tl-note">${info.n}</div>`:''}</div></div>`;});
   let refs=`<div class="ref-s"><h3>📎 참고자료</h3>`;if(!n.refs||!n.refs.length)refs+=`<div class="ref-empty">없음</div>`;else{refs+=`<div class="ref-l">`;n.refs.forEach(r=>{refs+=`<div class="ref-c"><span style="font-size:18px">${r.i}</span><div style="flex:1"><div class="rn">${r.n}</div><div class="rd">${r.d}</div></div><a href="${r.u}" target="_blank">열기</a></div>`;});refs+=`</div>`;}refs+=`</div>`;
-  dv.innerHTML=`<button class="back" onclick="hideDet()">← 돌아가기</button><div class="dt">${n.title}</div><div class="d-tags">${n.tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div><div class="d-meta"><span>분량 ${n.len}</span><span>시작 ${n.sd}</span><span>목표 ${n.ed}</span></div><div class="d-links">${lk}</div>${tl}${refs}`;}
+  dv.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start"><button class="back" onclick="hideDet()">← 돌아가기</button><button class="hdr-btn" onclick="hideDet();titleDbl(null,${id})" title="편집" style="font-size:14px">✏️</button></div><div class="dt">${n.title}</div><div class="d-tags">${n.tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div><div class="d-meta"><span>분량 ${n.len}</span><span>시작 ${n.sd}</span><span>목표 ${n.ed}</span></div><div class="d-links">${lk}</div>${tl}${refs}`;}
 function hideDet(){document.getElementById('det-v').classList.add('hidden');document.getElementById('main-view').classList.remove('hidden');}
 
 // === Build Tooltip HTML ===
@@ -565,6 +605,7 @@ function R(){
 }
 
 rp();R();
+if(!dk)document.getElementById('thbtn').textContent='☀️';
 </script>
 </body>
 </html>
