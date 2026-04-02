@@ -483,8 +483,9 @@ function updateSyncBadge(){
   el.textContent=labels[syncStatus];el.style.color=colors[syncStatus];
 }
 
+let isSaving=false;
 async function loadFromSheets(){
-  if(!SHEETS_ENABLED)return;
+  if(!SHEETS_ENABLED||isSaving)return;
   syncStatus='syncing';updateSyncBadge();
   try{
     const res=await fetch(API_URL);
@@ -505,12 +506,16 @@ async function loadFromSheets(){
 
 async function saveToSheets(){
   if(!SHEETS_ENABLED)return;
+  isSaving=true;
   syncStatus='syncing';updateSyncBadge();
   try{
     const payload={action:'save_all',...nToSheets(N)};
-    await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
-    syncStatus='synced';
+    const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    const result=await res.json();
+    if(result.ok)syncStatus='synced';
+    else syncStatus='error';
   }catch(e){syncStatus='error';}
+  isSaving=false;
   updateSyncBadge();
 }
 
@@ -520,7 +525,7 @@ function persist(){
   try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}
   if(SHEETS_ENABLED){
     clearTimeout(saveTimer);
-    saveTimer=setTimeout(()=>saveToSheets(),1500); // 1.5초 후 저장 (연속 수정 대응)
+    saveTimer=setTimeout(()=>saveToSheets(),800);
   }
 }
 function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합니까?')){N=JSON.parse(JSON.stringify(DEFAULT_N));persist();R();rSet();toast('초기화 완료');}}
@@ -627,7 +632,10 @@ function savePubEdit(nid){
   n.pubs=[];for(let i=0;i<5;i++){n.pubs.push({name:document.getElementById('m-pn'+i).value,url:document.getElementById('m-pu'+i).value});}
   n.st.publishing.s=document.getElementById('m-status').value;
   n.st.publishing.d=document.getElementById('m-due').value;
-  recomp(n);closeModal();persist();R();toast('발행 정보 저장됨');
+  recomp(n);closeModal();
+  try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}
+  saveToSheets();
+  R();toast('발행 정보 저장됨');
 }
 function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();R();toast('저장됨');}
 
