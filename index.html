@@ -106,7 +106,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .c.a{background:var(--active-bg);border:1px solid var(--active-bd);box-shadow:0 0 14px rgba(245,158,11,.12);}
 .c.p{background:var(--bg3);border:1px solid var(--border);opacity:.3;}
 .c.p:hover{opacity:.5;}
-.c.p.empty{background:rgba(61,79,104,.25);border:2px solid var(--fg4);opacity:.45;}
+.c.p.empty{background:#6b7a94;border:2px solid var(--fg4);opacity:.7;color:var(--fg4);}
 .c.b{background:var(--blocked-bg);border:1px solid var(--blocked-bd);}
 .c.has-url{border-bottom-width:2px;}
 .cl{font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;}
@@ -416,16 +416,15 @@ const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:
 const TAGS=["SF","문학","엽편","단편","중편","장편","야설","에로","판타지"];
 const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
 let N=[
-  {id:1,title:"5억년 버튼",tags:["SF","단편"],cs:"revision",len:"40매",sd:"2026-01-15",ed:"2026-04-15",dir:"https://drive.google.com/drive/folders/ex1",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"주관적 시간 체험",d:""},structure:{s:"done",n:"3막 확정",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"6씬",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"16,200자",d:""},revision:{s:"active",n:"2차 퇴고중",d:"2026-04-10"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"구조노트",d:"3막 & 씬",u:"#"},{i:"📂",n:"참고 논문",d:"시간지각",u:"#"}],up:"2026-03-28"},
-  {id:2,title:"모르는척",tags:["문학","단편"],cs:"revision",len:"30매",sd:"2026-02-01",ed:"2026-04-30",dir:"https://drive.google.com/drive/folders/ex2",links:{gdoc:"#",gdrive:"#",nc:""},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"gdoc"},scene_beat:{u:"#",t:"gdoc"},draft:{u:"#",t:"gdoc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"장례식장",d:""},structure:{s:"done",n:"K/M/O 비교",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"Version K",d:""},revision:{s:"active",n:"문체 정제",d:"2026-04-20"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"K/M/O 비교",d:"산문 비교",u:"#"}],up:"2026-03-25"},
-  {id:3,title:"찔러보기",tags:["문학","중편","에로"],cs:"scene_structure",len:"60매",sd:"2026-01-20",ed:"2026-06-30",dir:"",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"Poke → 성적 코드화",d:""},structure:{s:"done",n:"4장 12씬",d:""},story:{s:"done",n:"DB 유출",d:""},scene_structure:{s:"active",n:"16K~18K자",d:"2026-04-05"},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"4장 구조도",d:"12씬 배치",u:"#"}],up:"2026-03-20"},
-  {id:4,title:"역전의 남자들",tags:["문학","장편"],cs:"structure",len:"장편",sd:"2026-03-01",ed:"2027-03-01",dir:"",links:{gdoc:"",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdrive"},structure:{u:"#",t:"nc"},story:{u:"",t:""},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"모티프 맵",d:""},structure:{s:"active",n:"스타일 가이드",d:"2026-05-01"},story:{s:"pending",n:"",d:""},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"무진기행",d:"김승옥",u:"#"},{i:"📄",n:"무라카미",d:"A Slow Boat",u:"#"}],up:"2026-03-15"},
-  {id:5,title:"백지와 거울",tags:["SF","장편"],cs:"story",len:"49씬",sd:"2025-11-01",ed:"2027-06-01",dir:"#",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"진화적 취약성",d:""},structure:{s:"done",n:"4막 16장",d:""},story:{s:"active",n:"쌍둥이 시술",d:"2026-06-01"},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"49씬 구조",d:"NC 포맷",u:"#"}],up:"2026-03-10"},
-  {id:6,title:"반찬가게",tags:["SF","문학","단편"],cs:"draft",len:"40매",sd:"2026-02-10",ed:"2026-05-15",dir:"#",links:{gdoc:"#",gdrive:"",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"세로토닌 BBB",d:""},structure:{s:"done",n:"에세이→르포",d:""},story:{s:"done",n:"은폐/착취",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"active",n:"초고 집필중",d:"2026-04-03"},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"W-Method",d:"평화→Hard SF",u:"#"}],up:"2026-03-22"},
+  {id:1,title:"5억년 버튼",tags:["SF","단편"],cs:"revision",len:"40매",sd:"2026-01-15",ed:"2026-04-15",dir:"https://drive.google.com/drive/folders/ex1",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"주관적 시간 체험",d:""},structure:{s:"done",n:"3막 확정",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"6씬",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"16,200자",d:""},revision:{s:"active",n:"2차 퇴고중",d:"2026-04-10"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"구조노트",d:"3막 & 씬",u:"#"},{i:"📂",n:"참고 논문",d:"시간지각",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-28"},
+  {id:2,title:"모르는척",tags:["문학","단편"],cs:"revision",len:"30매",sd:"2026-02-01",ed:"2026-04-30",dir:"https://drive.google.com/drive/folders/ex2",links:{gdoc:"#",gdrive:"#",nc:""},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"gdoc"},scene_beat:{u:"#",t:"gdoc"},draft:{u:"#",t:"gdoc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"장례식장",d:""},structure:{s:"done",n:"K/M/O 비교",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"Version K",d:""},revision:{s:"active",n:"문체 정제",d:"2026-04-20"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"K/M/O 비교",d:"산문 비교",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-25"},
+  {id:3,title:"찔러보기",tags:["문학","중편","에로"],cs:"scene_structure",len:"60매",sd:"2026-01-20",ed:"2026-06-30",dir:"",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"Poke → 성적 코드화",d:""},structure:{s:"done",n:"4장 12씬",d:""},story:{s:"done",n:"DB 유출",d:""},scene_structure:{s:"active",n:"16K~18K자",d:"2026-04-05"},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"4장 구조도",d:"12씬 배치",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-20"},
+  {id:4,title:"역전의 남자들",tags:["문학","장편"],cs:"structure",len:"장편",sd:"2026-03-01",ed:"2027-03-01",dir:"",links:{gdoc:"",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdrive"},structure:{u:"#",t:"nc"},story:{u:"",t:""},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"모티프 맵",d:""},structure:{s:"active",n:"스타일 가이드",d:"2026-05-01"},story:{s:"pending",n:"",d:""},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"무진기행",d:"김승옥",u:"#"},{i:"📄",n:"무라카미",d:"A Slow Boat",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-15"},
+  {id:5,title:"백지와 거울",tags:["SF","장편"],cs:"story",len:"49씬",sd:"2025-11-01",ed:"2027-06-01",dir:"#",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"진화적 취약성",d:""},structure:{s:"done",n:"4막 16장",d:""},story:{s:"active",n:"쌍둥이 시술",d:"2026-06-01"},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"49씬 구조",d:"NC 포맷",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-10"},
+  {id:6,title:"반찬가게",tags:["SF","문학","단편"],cs:"draft",len:"40매",sd:"2026-02-10",ed:"2026-05-15",dir:"#",links:{gdoc:"#",gdrive:"",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"세로토닌 BBB",d:""},structure:{s:"done",n:"에세이→르포",d:""},story:{s:"done",n:"은폐/착취",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"active",n:"초고 집필중",d:"2026-04-03"},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"W-Method",d:"평화→Hard SF",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-22"},
 ];
-// localStorage persistence
 // ===== Google Sheets Integration =====
-const API_URL = 'https://script.google.com/macros/s/AKfycbwHhuswbM9MHEzrM0ECcS5pnzZB0Q-rUJUPil9pdTKTEyPZVWMRp_lio1fZ7gquD0iE/exec'; // ← 여기에 Apps Script 웹앱 URL 붙여넣기
+const API_URL = 'https://script.google.com/macros/s/AKfycbwHhuswbM9MHEzrM0ECcS5pnzZB0Q-rUJUPil9pdTKTEyPZVWMRp_lio1fZ7gquD0iE/exec';
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
 const DEFAULT_N=JSON.parse(JSON.stringify(N));
@@ -438,7 +437,7 @@ function sheetsToN(data){
     id:row.id, title:row.title, tags:row.tags||[],
     cs:row.cs, len:row.len, sd:row.sd, ed:row.ed, dir:row.dir,
     links:{gdoc:row.gdoc||'',gdrive:row.gdrive||'',nc:row.nc||''},
-    sl:{}, st:{}, refs:[], up:row.up
+    sl:{}, st:{}, refs:[], pubs:[], up:row.up
   }));
   // Fill stages
   novels.forEach(n=>{
@@ -476,7 +475,7 @@ function nToSheets(novels){
 }
 
 // Fetch from Sheets (async, updates after page load)
-let syncStatus='local'; // local | syncing | synced | error
+let syncStatus='local';
 function updateSyncBadge(){
   const el=document.getElementById('sync-badge');
   if(!el)return;
@@ -491,7 +490,6 @@ try{hasLocalData=!!localStorage.getItem('nc_novels');}catch(e){}
 
 async function loadFromSheets(force){
   if(!SHEETS_ENABLED||isSaving)return;
-  // 로컬 데이터가 있으면 자동 로드 안함 (수동 동기화만)
   if(hasLocalData&&!force)return;
   syncStatus='syncing';updateSyncBadge();
   try{
@@ -499,12 +497,24 @@ async function loadFromSheets(force){
     const data=await res.json();
     if(data.error){syncStatus='error';updateSyncBadge();return;}
     if(data.novels&&data.novels.length>0){
+      // 로컬 pubs 데이터 백업
+      const localPubs={};
+      N.forEach(n=>{localPubs[n.id]=n.pubs||[];});
+      
+      // Sheets 데이터로 N 업데이트
       N=sheetsToN(data);
+      
+      // 로컬 pubs 데이터 복구 (Sheets에 없어도 유지)
+      N.forEach(n=>{
+        if(localPubs[n.id]&&localPubs[n.id].length>0){
+          n.pubs=localPubs[n.id];
+        }
+      });
+      
       localStorage.setItem('nc_novels',JSON.stringify(N));
       hasLocalData=true;
       R();syncStatus='synced';
     } else if(!hasLocalData){
-      // Sheets도 비어있고 로컬도 없으면 → 현재 데이터 push
       await saveToSheets();
       syncStatus='synced';
     } else {
@@ -596,7 +606,7 @@ function titleDbl(e,nid){if(e)e.preventDefault();e&&e.stopPropagation();const n=
 function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();persist();R();toast('저장됨');}
 function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();persist();R();toast('삭제됨');}
 function addNovel(){const newId=N.length?Math.max(...N.map(x=>x.id))+1:1;const today=new Date().toISOString().slice(0,10);showModal(`<h3>➕ 새 작품 추가</h3><div class="sub">새 프로젝트를 시작합니다</div><label>제목</label><input type="text" id="m-title" value="" placeholder="작품 제목"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes([])}</div><label>분량</label><input type="text" id="m-len" value="" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${today}"/><label>목표 완료일</label><input type="date" id="m-ed" value=""/><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveNewNovel(${newId})">추가</button></div>`);}
-function saveNewNovel(newId){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:[{name:'',url:''},{name:'',url:''},{name:'',url:''},{name:'',url:''},{name:'',url:''}],up:new Date().toISOString().slice(0,10)});closeModal();persist();R();toast(`"${title}" 추가됨`);}
+function saveNewNovel(newId){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';const emptyPubs=[];for(let i=0;i<5;i++)emptyPubs.push({name:'',url:''});N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:emptyPubs,up:new Date().toISOString().slice(0,10)});closeModal();persist();R();toast(`"${title}" 추가됨`);}
 
 // Cell click/dblclick
 let cellTimer=null;
@@ -607,7 +617,6 @@ function cellClick(e,nid,sid){
     if(!n.pubs)n.pubs=[];
     const filled=n.pubs.filter(p=>p.name&&p.url);
     if(filled.length===0){cellDbl(null,nid,sid);return;}
-    // Show pub selector popup
     const ps=document.getElementById('pub-sel');
     let h=`<div class="pub-sel-title">📡 발행 사이트</div>`;
     filled.forEach(p=>{h+=`<a class="pub-sel-item" href="${p.url}" target="_blank" onclick="hidePubSel()"><span class="psi-dot"></span>${p.name}</a>`;});
@@ -640,12 +649,17 @@ function cellDbl(e,nid,sid){
 }
 async function savePubEdit(nid){
   const n=N.find(x=>x.id===nid);
-  n.pubs=[];for(let i=0;i<5;i++){n.pubs.push({name:document.getElementById('m-pn'+i).value,url:document.getElementById('m-pu'+i).value});}
+  n.pubs=[];
+  for(let i=0;i<5;i++){
+    n.pubs.push({name:document.getElementById('m-pn'+i).value,url:document.getElementById('m-pu'+i).value});
+  }
   n.st.publishing.s=document.getElementById('m-status').value;
   n.st.publishing.d=document.getElementById('m-due').value;
-  recomp(n);closeModal();
-  try{localStorage.setItem('nc_novels',JSON.stringify(N));hasLocalData=true;}catch(e){}
-  R();toast('저장 중…');
+  recomp(n);
+  closeModal();
+  persist();
+  R();
+  toast('저장 중…');
   await saveToSheets();
   toast(syncStatus==='synced'?'발행 정보 저장됨':'저장 오류 — 다시 시도해주세요');
 }
@@ -711,7 +725,6 @@ rp();R();
 if(!dk)document.getElementById('thbtn').textContent='☀️';
 updateSyncBadge();
 loadFromSheets();
-// 로컬 데이터 있으면 Sheets에 push (최초 동기화)
 if(hasLocalData&&SHEETS_ENABLED){setTimeout(()=>saveToSheets(),2000);}
 </script>
 </body>
