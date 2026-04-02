@@ -97,22 +97,22 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .ov-start{font-size:9px;color:var(--fg4);margin-top:2px;font-family:'Sora';}
 
 /* Cells */
-.c{display:inline-flex;align-items:center;justify-content:center;width:84%;height:28px;border-radius:7px;cursor:pointer;position:relative;transition:all .2s;user-select:none;font-family:'Sora';}
+.c{display:inline-flex;align-items:center;justify-content:center;width:84%;height:30px;border-radius:7px;cursor:pointer;position:relative;transition:all .2s;user-select:none;font-family:'Sora';}
 .c:hover{transform:scale(1.12);}
 .c.d.docs{background:var(--docs-bg);border:1px solid var(--docs-bd);}
 .c.d.nc{background:var(--nc-bg);border:1px solid var(--nc-bd);}
 .c.d.none{background:var(--done-bg);border:1px solid rgba(16,185,129,.18);}
+.c.d.complete-done{background:rgba(34,211,238,.15);border:2px solid rgba(34,211,238,.4);}
 .c.a{background:var(--active-bg);border:1px solid var(--active-bd);box-shadow:0 0 14px rgba(245,158,11,.12);}
 .c.p{background:var(--bg3);border:1px solid var(--border);opacity:.3;}
 .c.p:hover{opacity:.5;}
+.c.p.empty{background:rgba(61,79,104,.25);border:2px solid var(--fg4);opacity:.45;}
 .c.b{background:var(--blocked-bg);border:1px solid var(--blocked-bd);}
 .c.has-url{border-bottom-width:2px;}
-.cl{font-size:7px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
-.c.d .cl{color:var(--docs);}
-.c.d.nc .cl{color:var(--nc);}
-.c.a .cl{color:var(--active);}
-.c.p .cl{color:var(--fg4);}
-.c.b .cl{color:var(--blocked);}
+.cl{font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;}
+.c.d.complete-done .cl{color:var(--accent);text-shadow:0 0 8px var(--accent-glow);}
+.c.p .cl{color:transparent;}
+.c.p.empty .cl{color:transparent;}
 /* Tooltip */
 .c-tip{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--bg1);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;font-size:11px;color:var(--fg);z-index:20;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.5);min-width:150px;max-width:230px;white-space:normal;line-height:1.5;backdrop-filter:blur(16px);}
 .c-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border2);}
@@ -155,14 +155,16 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .mob-labels{display:flex;gap:2px;margin-bottom:3px;}
 .mob-label{flex:1;text-align:center;font-family:'Sora';font-size:11px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;}
 .mob-bar{display:flex;gap:2px;}
-.mob-seg{flex:1;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:6px;font-weight:700;font-family:'Sora';text-transform:uppercase;position:relative;transition:all .15s;}
+.mob-seg{flex:1;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:7px;font-weight:800;font-family:'Sora';text-transform:uppercase;position:relative;transition:all .15s;color:#fff;}
 .mob-seg:active{transform:scale(1.15);}
-.mob-seg.d.docs{background:var(--docs-bg);border:1px solid var(--docs-bd);color:var(--docs);}
-.mob-seg.d.nc{background:var(--nc-bg);border:1px solid var(--nc-bd);color:var(--nc);}
-.mob-seg.d.none{background:var(--done-bg);border:1px solid rgba(16,185,129,.18);color:var(--done);}
-.mob-seg.a{background:var(--active-bg);border:1px solid var(--active-bd);color:var(--active);}
+.mob-seg.d.docs{background:var(--docs-bg);border:1px solid var(--docs-bd);color:#fff;}
+.mob-seg.d.nc{background:var(--nc-bg);border:1px solid var(--nc-bd);color:#fff;}
+.mob-seg.d.none{background:var(--done-bg);border:1px solid rgba(16,185,129,.18);color:#fff;}
+.mob-seg.a{background:var(--active-bg);border:1px solid var(--active-bd);color:#fff;}
 .mob-seg.p{background:var(--bg3);border:1px solid var(--border);color:var(--fg4);opacity:.3;}
-.mob-seg.b{background:var(--blocked-bg);border:1px solid var(--blocked-bd);color:var(--blocked);}
+.mob-seg.p.empty{background:rgba(61,79,104,.25);border:2px solid var(--fg4);opacity:.45;color:transparent;}
+.mob-seg.d.complete-done{background:rgba(34,211,238,.15);border:2px solid rgba(34,211,238,.4);color:var(--accent);}
+.mob-seg.b{background:var(--blocked-bg);border:1px solid var(--blocked-bd);color:#fff;}
 .mob-info{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:11px;margin-bottom:12px;}
 .mob-info .k{color:var(--fg4);font-family:'Sora';font-size:9px;font-weight:600;text-transform:uppercase;}
 .mob-info .v{color:var(--fg2);font-weight:500;}
@@ -484,8 +486,13 @@ function updateSyncBadge(){
 }
 
 let isSaving=false;
-async function loadFromSheets(){
+let hasLocalData=false;
+try{hasLocalData=!!localStorage.getItem('nc_novels');}catch(e){}
+
+async function loadFromSheets(force){
   if(!SHEETS_ENABLED||isSaving)return;
+  // 로컬 데이터가 있으면 자동 로드 안함 (수동 동기화만)
+  if(hasLocalData&&!force)return;
   syncStatus='syncing';updateSyncBadge();
   try{
     const res=await fetch(API_URL);
@@ -494,10 +501,13 @@ async function loadFromSheets(){
     if(data.novels&&data.novels.length>0){
       N=sheetsToN(data);
       localStorage.setItem('nc_novels',JSON.stringify(N));
+      hasLocalData=true;
       R();syncStatus='synced';
-    } else {
-      // Sheets empty — push current data
+    } else if(!hasLocalData){
+      // Sheets도 비어있고 로컬도 없으면 → 현재 데이터 push
       await saveToSheets();
+      syncStatus='synced';
+    } else {
       syncStatus='synced';
     }
   }catch(e){syncStatus='error';}
@@ -512,7 +522,7 @@ async function saveToSheets(){
     const payload={action:'save_all',...nToSheets(N)};
     const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     const result=await res.json();
-    if(result.ok)syncStatus='synced';
+    if(result.ok){syncStatus='synced';hasLocalData=true;}
     else syncStatus='error';
   }catch(e){syncStatus='error';}
   isSaving=false;
@@ -523,13 +533,14 @@ async function saveToSheets(){
 let saveTimer=null;
 function persist(){
   try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}
+  hasLocalData=true;
   if(SHEETS_ENABLED){
     clearTimeout(saveTimer);
     saveTimer=setTimeout(()=>saveToSheets(),800);
   }
 }
 function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합니까?')){N=JSON.parse(JSON.stringify(DEFAULT_N));persist();R();rSet();toast('초기화 완료');}}
-async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await loadFromSheets();rSet();toast('동기화 완료');}
+async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await saveToSheets();await loadFromSheets(true);rSet();toast('동기화 완료');}
 
 let cv="overview",at=new Set(),ex=new Set(),dk=true;
 try{const t=localStorage.getItem('nc_theme');if(t)dk=t==='dark';}catch(e){}
@@ -627,15 +638,16 @@ function cellDbl(e,nid,sid){
   }
   const sl=n.sl[sid];showModal(`<h3>${stage.i} ${stage.l}</h3><div class="sub">${n.title}</div><label>문서 URL</label><input type="url" id="m-url" value="${sl?sl.u:''}" placeholder="https://..."/><label>도구</label><div style="display:flex;gap:12px;margin-bottom:4px"><label style="font-size:12px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:4px;margin:0"><input type="radio" name="m-tool" value="gdoc" ${(!sl||!sl.t||sl.t==='gdoc'||sl.t==='gdrive')?'checked':''}> Docs</label><label style="font-size:12px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:4px;margin:0"><input type="radio" name="m-tool" value="nc" ${sl&&sl.t==='nc'?'checked':''}> NC</label></div><label>마감일</label><input type="date" id="m-due" value="${info.d||''}"/><label>상태</label><select id="m-status"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveCellEdit(${nid},'${sid}')">저장</button></div>`);
 }
-function savePubEdit(nid){
+async function savePubEdit(nid){
   const n=N.find(x=>x.id===nid);
   n.pubs=[];for(let i=0;i<5;i++){n.pubs.push({name:document.getElementById('m-pn'+i).value,url:document.getElementById('m-pu'+i).value});}
   n.st.publishing.s=document.getElementById('m-status').value;
   n.st.publishing.d=document.getElementById('m-due').value;
   recomp(n);closeModal();
-  try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}
-  saveToSheets();
-  R();toast('발행 정보 저장됨');
+  try{localStorage.setItem('nc_novels',JSON.stringify(N));hasLocalData=true;}catch(e){}
+  R();toast('저장 중…');
+  await saveToSheets();
+  toast(syncStatus==='synced'?'발행 정보 저장됨':'저장 오류 — 다시 시도해주세요');
 }
 function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();R();toast('저장됨');}
 
@@ -671,13 +683,13 @@ function R(){
   let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
   ns.forEach(n=>{let rU='';S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){const u=uc(info.d);if(u==='uc'||u==='u3')rU='row-over';}});const dl=dli(n);const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';const hasDir=!!n.dir;
     o+=`<tr class="${rU}"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
-    S.forEach(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let cc='c ';if(info.s==='done')cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;else if(info.s==='active')cc+=`a ${uc(info.d)}`;else if(info.s==='blocked')cc+='b';else cc+='p';let lb='';if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';} else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCK';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;});o+=`</tr>`;});
+    S.forEach(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';const isE=!sl?.u&&!info.n;let cc='c ';if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}else if(info.s==='active')cc+=`a ${uc(info.d)}`;else if(info.s==='blocked')cc+='b';else cc+=`p${isE?' empty':''}`;let lb='';if(st.id==='complete'&&info.s==='done')lb='DONE';else if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';}else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCK';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;});o+=`</tr>`;});
   o+=`</tbody></table></div>`;
 
   // Mobile Overview
   let mo='<div class="mob-ov">';
   ns.forEach(n=>{const dl=dli(n);const cs=S.find(x=>x.id===n.cs);const hasDir=!!n.dir;const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
-    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';if(info.s==='done')sc+=`d ${tc}`;else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+='p';const lb=info.s==='active'?'NOW':info.s==='blocked'?'BLK':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;}).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
+    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';const mIsE=!sl?.u&&!info.n;if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+=`p${mIsE?' empty':''}`;const lb=st.id==='complete'&&info.s==='done'?'DONE':info.s==='active'?'NOW':info.s==='blocked'?'BLK':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;}).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
   mo+='</div>';
   document.getElementById('ov-v').innerHTML=o+mo;
 
@@ -699,6 +711,8 @@ rp();R();
 if(!dk)document.getElementById('thbtn').textContent='☀️';
 updateSyncBadge();
 loadFromSheets();
+// 로컬 데이터 있으면 Sheets에 push (최초 동기화)
+if(hasLocalData&&SHEETS_ENABLED){setTimeout(()=>saveToSheets(),2000);}
 </script>
 </body>
 </html>
