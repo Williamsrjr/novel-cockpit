@@ -417,8 +417,8 @@ let N=[
   {id:6,title:"반찬가게",tags:["SF","문학","단편"],cs:"draft",len:"40매",sd:"2026-02-10",ed:"2026-05-15",dir:"#",links:{gdoc:"#",gdrive:"",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"세로토닌 BBB",d:""},structure:{s:"done",n:"에세이→르포",d:""},story:{s:"done",n:"은폐/착취",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"active",n:"초고 집필중",d:"2026-04-03"},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"W-Method",d:"평화→Hard SF",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-22"},
 ];
 // ===== Google Sheets Integration =====
-const API_URL = 'https://script.google.com/macros/s/AKfycbzID-iZZcR3leIGQJjUeFzzmiHHYUvqOpmGAz4FUqNTgm2D73M87Ok6pODMhmjwmuLU/exec';
-const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxQ4CNeYPz6Mf4iFOaiopQcXy1kfWpImBPSDqjztTD3XdAJFWWWSpXKmev9Th1Zmf53/exec';
+const SHEETS_ENABLED = API_URL !== 'https://script.google.com/macros/s/AKfycbxQ4CNeYPz6Mf4iFOaiopQcXy1kfWpImBPSDqjztTD3XdAJFWWWSpXKmev9Th1Zmf53/exec';
 
 const DEFAULT_N=JSON.parse(JSON.stringify(N));
 N=[]; // ✅ 시트 데이터 로드 전까지 빈 배열 (하드코딩 데이터 표시 방지)
@@ -494,9 +494,16 @@ async function loadFromSheets(force){
       
       // Sheets 데이터로 N 업데이트
       const newN=sheetsToN(data);
-      // ✅ 유효성 검증: cs가 유효한 소설만 허용
-      const valid=newN.every(n=>S.some(s=>s.id===n.cs));
-      if(!valid){console.error('Sheets 데이터 오류: 유효하지 않은 cs 값 발견');syncStatus='error';updateSyncBadge();return;}
+      // ✅ 디버깅: Sheets에서 받은 실제 데이터 출력
+      console.log('📊 Sheets 원본 데이터:', JSON.stringify(data.novels.map(n=>({id:n.id,cs:n.cs,csType:typeof n.cs}))));
+      console.log('📊 변환 후 newN:', newN.map(n=>({id:n.id,title:n.title,cs:n.cs})));
+      // ✅ 유효성 검증 + 자동 복구: cs가 유효하지 않으면 첫 active 또는 ideation으로 대체
+      newN.forEach(n=>{
+        if(!S.some(s=>s.id===n.cs)){
+          console.warn(`⚠️ 소설 "${n.title}"(id:${n.id})의 cs="${n.cs}"(type:${typeof n.cs})가 유효하지 않음 → ideation으로 복구`);
+          n.cs='ideation';
+        }
+      });
       N=newN;
       
       // Sheets pubs와 로컬 pubs를 merge (둘 다 보존)
