@@ -424,18 +424,19 @@ const DEFAULT_N=JSON.parse(JSON.stringify(N));
 N=[]; // ✅ 시트 데이터 로드 전까지 빈 배열 (하드코딩 데이터 표시 방지)
 
 // Convert Sheets flat data → N[] format
+function fmtD(v){if(!v)return'';const s=String(v);return s.length>=10?s.slice(0,10):s;} // ✅ ISO날짜→YYYY-MM-DD
 function sheetsToN(data){
   const novels=data.novels.map(row=>({
     id:row.id, title:row.title, tags:row.tags||[],
-    cs:row.cs, len:row.len, sd:row.sd, ed:row.ed, dir:row.dir,
+    cs:row.cs, len:row.len, sd:fmtD(row.sd), ed:fmtD(row.ed), dir:row.dir,
     links:{gdoc:row.gdoc||'',gdrive:row.gdrive||'',nc:row.nc||''},
-    sl:{}, st:{}, refs:[], pubs:[], up:row.up
+    sl:{}, st:{}, refs:[], pubs:[], up:fmtD(row.up)
   }));
   // Fill stages
   novels.forEach(n=>{
     S.forEach(s=>{n.sl[s.id]={u:'',t:''};n.st[s.id]={s:'pending',n:'',d:''};});
     data.stages.filter(s=>s.novelId===n.id).forEach(s=>{
-      n.st[s.stageId]={s:s.status||'pending',n:s.note||'',d:s.due||''};
+      n.st[s.stageId]={s:s.status||'pending',n:s.note||'',d:fmtD(s.due)};
       n.sl[s.stageId]={u:s.url||'',t:s.tool||''};
     });
     n.refs=data.refs.filter(r=>r.novelId===n.id).map(r=>({i:r.icon,n:r.name,d:r.desc,u:r.url}));
@@ -494,15 +495,9 @@ async function loadFromSheets(force){
       
       // Sheets 데이터로 N 업데이트
       const newN=sheetsToN(data);
-      // ✅ 디버깅: Sheets에서 받은 실제 데이터 출력
-      console.log('📊 Sheets 원본 데이터:', JSON.stringify(data.novels.map(n=>({id:n.id,cs:n.cs,csType:typeof n.cs}))));
-      console.log('📊 변환 후 newN:', newN.map(n=>({id:n.id,title:n.title,cs:n.cs})));
-      // ✅ 유효성 검증 + 자동 복구: cs가 유효하지 않으면 첫 active 또는 ideation으로 대체
+      // 유효성 검증 + 자동 복구
       newN.forEach(n=>{
-        if(!S.some(s=>s.id===n.cs)){
-          console.warn(`⚠️ 소설 "${n.title}"(id:${n.id})의 cs="${n.cs}"(type:${typeof n.cs})가 유효하지 않음 → ideation으로 복구`);
-          n.cs='ideation';
-        }
+        if(!S.some(s=>s.id===n.cs)){n.cs='ideation';}
       });
       N=newN;
       
