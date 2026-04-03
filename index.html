@@ -81,7 +81,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 /* === OVERVIEW TABLE === */
 .ov-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .ov-t{width:100%;min-width:880px;border-collapse:collapse;}
-.ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:600;letter-spacing:-.01em;padding:16px 2px 12px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);}
+.ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:600;letter-spacing:-.01em;padding:16px 2px 12px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);position:sticky;top:0;z-index:10;}
 .ov-t thead th:first-child{text-align:left;padding-left:22px;min-width:170px;width:170px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);}
 .ov-t thead th .si{display:none;}
 .ov-t tbody tr{border-bottom:1px solid var(--border);transition:all .2s;}
@@ -387,7 +387,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
         <button class="icon-btn" onclick="openSet()" title="관리">⚙️</button>
       </div>
     </div>
-    <p class="page-sub">오늘도 당신의 이야기를 완성해보세요.</p>
+    <p class="page-sub"></p>
     <div class="nav">
       <div class="nav-tabs"><button class="nav-t on" data-v="overview" onclick="sv('overview')">전체보기</button><button class="nav-t" data-v="works" onclick="sv('works')">작품별</button></div>
       <div class="nav-sep"></div>
@@ -412,7 +412,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 <div id="modal" class="modal hidden"></div>
 
 <script>
-const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:"🏗"},{id:"story",l:"정교화",i:"🧬"},{id:"scene_structure",l:"씬구조",i:"🎬"},{id:"scene_beat",l:"씬비트",i:"🥁"},{id:"draft",l:"초고",i:"✍️"},{id:"revision",l:"퇴고",i:"🔄"},{id:"complete",l:"완성",i:"✅"},{id:"publishing",l:"발행",i:"📡"}];
+const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:"🏗"},{id:"story",l:"BG",i:"🧬"},{id:"scene_structure",l:"씬구조",i:"🎬"},{id:"scene_beat",l:"씬비트",i:"🥁"},{id:"draft",l:"초고",i:"✍️"},{id:"revision",l:"퇴고",i:"🔄"},{id:"complete",l:"교정교열",i:"✅"},{id:"publishing",l:"발행",i:"📡"}];
 const TAGS=["SF","문학","엽편","단편","중편","장편","야설","에로","판타지"];
 const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
 let N=[
