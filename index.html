@@ -429,7 +429,7 @@ const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
 const DEFAULT_N=JSON.parse(JSON.stringify(N));
 // Load from localStorage first (instant)
-try{const saved=localStorage.getItem('nc_novels');if(saved)N=JSON.parse(saved);}catch(e){}
+// localStorage 제거됨
 
 // Convert Sheets flat data → N[] format
 function sheetsToN(data){
@@ -486,7 +486,7 @@ function updateSyncBadge(){
 
 let isSaving=false;
 let hasLocalData=false;
-try{hasLocalData=!!localStorage.getItem('nc_novels');}catch(e){}
+let hasLocalData=true;// Google Sheets 기반으로 변경
 
 async function loadFromSheets(force){
   if(!SHEETS_ENABLED||isSaving)return;
@@ -524,7 +524,7 @@ async function loadFromSheets(force){
         while(n.pubs.length<5)n.pubs.push({name:'',url:''});
       });
       
-      localStorage.setItem('nc_novels',JSON.stringify(N));
+// localStorage 제거됨
       hasLocalData=true;
       R();syncStatus='synced';
     } else if(!hasLocalData){
@@ -554,23 +554,32 @@ async function saveToSheets(){
 
 // Debounced save
 let saveTimer=null;
-function persist(){
-  try{localStorage.setItem('nc_novels',JSON.stringify(N));}catch(e){}
+// ===== CRUD: Google Sheets 기반 =====
+async function persist(){
+  // localStorage 제거됨 (Google Sheets만 사용)
   hasLocalData=true;
   if(SHEETS_ENABLED){
     clearTimeout(saveTimer);
     saveTimer=setTimeout(async ()=>{
-      await saveToSheets();
-      // Sheets 저장 후 최신 데이터를 다시 로드 (모든 PC의 변경사항 반영)
-      await loadFromSheets(true);
+      try{
+        // 1️⃣ Google Sheets에 즉시 커밋
+        await saveToSheets();
+        // 2️⃣ 전체 데이터 재로드 (모든 PC의 변경사항 반영)
+        await loadFromSheets(true);
+        // 3️⃣ UI 업데이트는 loadFromSheets() 내에서 R() 호출
+      }catch(e){
+        console.error('persist() 오류:', e);
+        syncStatus='error';
+        updateSyncBadge();
+      }
     },800);
   }
 }
-function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합니까?')){N=JSON.parse(JSON.stringify(DEFAULT_N));persist();R();rSet();toast('초기화 완료');}}
+function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합니까?')){N=JSON.parse(JSON.stringify(DEFAULT_N));persist();rSet();toast('초기화 완료');}}
 async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await saveToSheets();await loadFromSheets(true);rSet();toast('동기화 완료');}
 
 let cv="overview",at=new Set(),ex=new Set(),dk=true;
-try{const t=localStorage.getItem('nc_theme');if(t)dk=t==='dark';}catch(e){}
+// localStorage 제거됨
 if(!dk)document.documentElement.setAttribute('data-theme','light');
 const TD=new Date();
 
@@ -584,7 +593,7 @@ function gf(){if(at.size===0)return N;return N.filter(n=>[...at].some(t=>n.tags.
 function tt(t){if(at.has(t))at.delete(t);else at.add(t);rp();R();}
 function sv(v){cv=v;document.querySelectorAll('.nav-t').forEach(b=>b.classList.toggle('on',b.dataset.v===v));document.getElementById('ov-v').classList.toggle('hidden',v!=='overview');document.getElementById('wk-v').classList.toggle('hidden',v!=='works');R();}
 function rp(){document.getElementById('pills').innerHTML=TAGS.map(t=>`<button class="pill ${at.has(t)?'on':''}" onclick="tt('${t}')">${t}</button>`).join('');}
-function togTheme(){dk=!dk;document.documentElement.setAttribute('data-theme',dk?'dark':'light');document.getElementById('thbtn').textContent=dk?'🌙':'☀️';try{localStorage.setItem('nc_theme',dk?'dark':'light');}catch(e){}}
+function togTheme(){dk=!dk;document.documentElement.setAttribute("data-theme",dk?"dark":"light");document.getElementById("thbtn").textContent=dk?"🌙":"☀️";}
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
 // Context Menu
@@ -601,9 +610,9 @@ function showCtx(e,nid,sid){e.preventDefault();e.stopPropagation();ctxNid=nid;ct
   ctx.innerHTML=h;ctx.classList.remove('hidden');let x=e.clientX,y=e.clientY;const w=ctx.offsetWidth,ht=ctx.offsetHeight;if(x+w>window.innerWidth)x=window.innerWidth-w-8;if(y+ht>window.innerHeight)y=window.innerHeight-ht-8;ctx.style.left=x+'px';ctx.style.top=y+'px';}
 function hideCtx(){document.getElementById('ctx-menu').classList.add('hidden');}
 document.addEventListener('click',hideCtx);document.addEventListener('scroll',hideCtx,true);
-function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();persist();R();const labels={pending:'대기',active:'진행중',done:'완료',blocked:'막힘'};toast(`${S.find(x=>x.id===ctxSid).l} → ${labels[s]}`);}
+function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();persist();const labels={pending:'대기',active:'진행중',done:'완료',blocked:'막힘'};toast(`${S.find(x=>x.id===ctxSid).l} → ${labels[s]}`);}
 function ctxMemo(){hideCtx();const n=N.find(x=>x.id===ctxNid);const info=n.st[ctxSid];const stage=S.find(x=>x.id===ctxSid);showModal(`<h3>✏️ 메모</h3><div class="sub">${n.title} — ${stage.l}</div><label>메모</label><textarea id="m-memo" placeholder="이 단계에 대한 메모...">${info.n||''}</textarea><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveMemo()">저장</button></div>`);}
-function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();persist();R();toast('메모 저장됨');}
+function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();persist();toast('메모 저장됨');}
 function ctxOpen(){hideCtx();window.open(N.find(x=>x.id===ctxNid).sl[ctxSid].u,'_blank');}
 function ctxCopy(){hideCtx();navigator.clipboard.writeText(N.find(x=>x.id===ctxNid).sl[ctxSid].u).then(()=>toast('URL 복사됨')).catch(()=>toast('복사 실패'));}
 function ctxEdit(){hideCtx();cellDbl(null,ctxNid,ctxSid);}
@@ -620,10 +629,10 @@ let titleTimer=null;
 function handleTitle(e,nid){if(e)e.stopPropagation();if(titleTimer){clearTimeout(titleTimer);titleTimer=null;titleDbl(e,nid);return;}titleTimer=setTimeout(()=>{titleTimer=null;titleClick(nid);},300);}
 function titleClick(nid){const n=N.find(x=>x.id===nid);if(n.dir)window.open(n.dir,'_blank');else titleDbl(null,nid);}
 function titleDbl(e,nid){if(e)e.preventDefault();e&&e.stopPropagation();const n=N.find(x=>x.id===nid);showModal(`<h3>✏️ 작품 편집</h3><div class="sub">${n.title}</div><label>제목</label><input type="text" id="m-title" value="${n.title}"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes(n.tags)}</div><label>분량</label><input type="text" id="m-len" value="${n.len}" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="${n.dir||''}" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${n.sd}"/><label>목표 완료일</label><input type="date" id="m-ed" value="${n.ed}"/><div class="m-btns" style="justify-content:space-between"><button class="m-btn m-danger" onclick="deleteNovel(${nid})">삭제</button><div style="display:flex;gap:8px"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveTitleEdit(${nid})">저장</button></div></div>`);}
-function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();persist();R();toast('저장됨');}
-function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();persist();R();toast('삭제됨');}
+function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();persist();toast('저장됨');}
+function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();persist();toast('삭제됨');}
 function addNovel(){const newId=N.length?Math.max(...N.map(x=>x.id))+1:1;const today=new Date().toISOString().slice(0,10);showModal(`<h3>➕ 새 작품 추가</h3><div class="sub">새 프로젝트를 시작합니다</div><label>제목</label><input type="text" id="m-title" value="" placeholder="작품 제목"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes([])}</div><label>분량</label><input type="text" id="m-len" value="" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${today}"/><label>목표 완료일</label><input type="date" id="m-ed" value=""/><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveNewNovel(${newId})">추가</button></div>`);}
-function saveNewNovel(newId){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';const emptyPubs=[];for(let i=0;i<5;i++)emptyPubs.push({name:'',url:''});N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:emptyPubs,up:new Date().toISOString().slice(0,10)});closeModal();persist();R();toast(`"${title}" 추가됨`);}
+function saveNewNovel(newId){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';const emptyPubs=[];for(let i=0;i<5;i++)emptyPubs.push({name:'',url:''});N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:emptyPubs,up:new Date().toISOString().slice(0,10)});closeModal();persist();toast(`"${title}" 추가됨`);}
 
 // Cell click/dblclick
 let cellTimer=null;
@@ -682,15 +691,15 @@ async function savePubEdit(nid){
   await loadFromSheets(true);
   toast(syncStatus==='synced'?'발행 정보 저장됨':'저장 오류 — 다시 시도해주세요');
 }
-function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();R();toast('저장됨');}
+function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();toast('저장됨');}
 
 // Settings
 function openSet(){document.getElementById('set-ov').classList.remove('hidden');document.body.style.overflow='hidden';rSet();}
 function closeSet(){document.getElementById('set-ov').classList.add('hidden');document.body.style.overflow='';}
 function tExp(id){if(ex.has(id))ex.delete(id);else ex.add(id);rSet();}
 function uSS(nid,sid,v){N.find(x=>x.id===nid).st[sid].s=v;recomp(N.find(x=>x.id===nid));persist();rSet();R();}
-function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;persist();R();}
-function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;persist();R();rSet();}
+function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;persist();}
+function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;persist();rSet();}
 function rSet(){let h=`<div class="sp-h"><h2>⚙️ 관리</h2><button class="sp-x" onclick="closeSet()">✕</button></div><div class="sp-sec"><div class="sp-st">🎨 화면</div><div class="sp-row"><div><div class="sp-lbl">다크 모드</div></div><label class="tog"><input type="checkbox" ${dk?'checked':''} onchange="togTheme()"><span class="tog-s"></span></label></div></div><div class="sp-sec"><div class="sp-st">📋 작품 관리</div><table class="mt"><thead><tr><th>작품</th><th>현재</th><th>시작일</th><th>목표일</th><th></th></tr></thead><tbody>`;
   N.forEach(n=>{const cs=S.find(x=>x.id===n.cs);const isE=ex.has(n.id);h+=`<tr><td><span class="mt-t">${n.title}</span></td><td><span class="sdot ${n.st[n.cs].s}"></span> ${cs.l}</td><td><input type="date" class="mt-i" value="${n.sd}" onchange="uND(${n.id},'sd',this.value)"></td><td><input type="date" class="mt-i" value="${n.ed}" onchange="uND(${n.id},'ed',this.value)"></td><td><button class="eb" onclick="tExp(${n.id})">${isE?'접기':'▾'}</button></td></tr>`;if(isE){h+=`<tr><td colspan="5" style="padding:0 0 6px"><div class="se-w"><div class="se-r se-hd"><div>단계</div><div>상태</div><div>마감일</div></div>`;S.forEach(st=>{const info=n.st[st.id];h+=`<div class="se-r"><div class="se-n"><span class="sdot ${info.s}"></span>${st.i} ${st.l}</div><div><select class="se-sel" onchange="uSS(${n.id},'${st.id}',this.value)"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select></div><div><input type="date" class="se-di" value="${info.d||''}" onchange="uSD(${n.id},'${st.id}',this.value)"></div></div>`;});h+=`</div></td></tr>`;}});
   h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">☁️ Google Sheets 동기화</div><div class="sp-row"><div><div class="sp-lbl">상태</div><div class="sp-desc">${SHEETS_ENABLED?'연결됨 — '+API_URL.slice(0,50)+'…':'❌ 미설정 — HTML에서 API_URL을 설정하세요'}</div></div>${SHEETS_ENABLED?`<button class="m-btn m-ok" style="padding:6px 14px;font-size:12px" onclick="manualSync()">수동 동기화</button>`:''}</div></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" checked><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl" style="color:var(--danger)">데이터 초기화</div><div class="sp-desc">모든 수정사항을 샘플 데이터로 리셋</div></div><button class="m-btn" style="background:var(--danger);color:#fff;padding:6px 14px;font-size:12px" onclick="resetData()">리셋</button></div></div>`;
@@ -743,8 +752,8 @@ function R(){
 rp();R();
 if(!dk)document.getElementById('thbtn').textContent='☀️';
 updateSyncBadge();
-loadFromSheets();
-if(hasLocalData&&SHEETS_ENABLED){setTimeout(()=>saveToSheets(),2000);}
+// ✅ Google Sheets에서 강제 로드 (localStorage 제거됨)
+loadFromSheets(true);
 </script>
 </body>
 </html>
