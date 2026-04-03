@@ -753,6 +753,43 @@ if(!dk)document.getElementById('thbtn').textContent='☀️';
 updateSyncBadge();
 // ✅ Google Sheets에서 강제 로드 (localStorage 제거됨)
 loadFromSheets(true);
+
+// ===== 자동 폴링: 10초 주기 (Visibility API 포함) =====
+let pollingInterval=null;
+
+function startPolling(){
+  if(pollingInterval)return;
+  pollingInterval=setInterval(async ()=>{
+    if(!isSaving && !document.hidden){
+      try{
+        await loadFromSheets(true);
+      }catch(e){
+        console.warn('폴링 중 오류:', e);
+      }
+    }
+  },10000);  // 10초 주기
+  syncStatus='synced';updateSyncBadge();
+}
+
+function stopPolling(){
+  if(pollingInterval){
+    clearInterval(pollingInterval);
+    pollingInterval=null;
+  }
+}
+
+// 탭 전환 감지 (Visibility API)
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    stopPolling();  // 백그라운드: 폴링 중지
+    syncStatus='local';updateSyncBadge();
+  }else{
+    startPolling();  // 포그라운드: 폴링 재개
+  }
+});
+
+// 초기 폴링 시작
+startPolling();
 </script>
 </body>
 </html>
