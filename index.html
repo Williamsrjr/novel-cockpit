@@ -38,9 +38,12 @@
 [data-theme="light"] .mob-label{color:#000;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR','Sora',sans-serif;background:var(--bg0);color:var(--fg);min-height:100vh;-webkit-font-smoothing:antialiased;}
+/* Dot grid background */
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(100,180,255,.07) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;z-index:0;}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 5%,rgba(0,238,255,.06),transparent 50%),radial-gradient(ellipse at 85% 90%,rgba(124,138,255,.04),transparent 50%);pointer-events:none;z-index:0;}
 .app{max-width:1140px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
+
+/* === HEADER === */
 .hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .brand{display:flex;align-items:center;gap:14px;}
 .brand-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--nc));display:flex;align-items:center;justify-content:center;font-family:'Sora';font-size:20px;font-weight:800;color:#fff;box-shadow:0 0 20px var(--accent-glow);}
@@ -51,7 +54,11 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .add-btn:hover{background:rgba(0,238,255,.18);box-shadow:0 0 16px var(--accent-glow);transform:translateY(-1px);}
 .icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border2);background:var(--glass2);color:var(--fg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s;}
 .icon-btn:hover{background:var(--bg3);color:var(--fg);border-color:var(--accent);box-shadow:0 0 12px var(--accent-glow);}
+
+/* Subtitle */
 .page-sub{font-size:14px;color:var(--fg3);margin-bottom:8px;}
+
+/* === NAV === */
 .nav{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center;}
 .nav-tabs{display:flex;background:var(--glass);backdrop-filter:blur(16px);border-radius:12px;padding:3px;border:1px solid var(--border);}
 .nav-t{padding:8px 18px;border:none;background:transparent;color:var(--fg3);cursor:pointer;border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;transition:all .2s;}
@@ -61,11 +68,17 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .pill{padding:5px 12px;border:1px solid var(--border2);background:transparent;color:var(--fg3);cursor:pointer;border-radius:100px;font-size:11px;font-family:inherit;transition:all .15s;white-space:nowrap;font-weight:500;}
 .pill:hover{border-color:var(--fg4);}
 .pill.on{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:600;box-shadow:0 0 8px var(--accent-glow);}
+
+/* Legend */
 .legend{display:flex;gap:16px;margin-bottom:16px;font-size:10px;color:var(--fg4);align-items:center;flex-wrap:wrap;font-family:'Sora';font-weight:500;}
 .lg-i{display:flex;align-items:center;gap:5px;}
 .lg-d{width:14px;height:7px;border-radius:3px;}
 .lg-hint{margin-left:auto;opacity:.6;font-size:9px;}
+
+/* === GLASS PANEL === */
 .glass-panel{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--card-r);overflow:visible;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+
+/* === OVERVIEW TABLE === */
 .ov-wrap{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 400px);-webkit-overflow-scrolling:touch;}
 .ov-t{width:100%;min-width:880px;border-collapse:collapse;}
 .ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:600;letter-spacing:-.01em;padding:10px 2px 8px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);position:sticky;top:0;z-index:10;}
@@ -82,6 +95,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .ov-sub{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}
 .ov-tag{font-size:9px;padding:2px 7px;border-radius:4px;background:var(--bg3);color:var(--fg3);font-weight:500;}
 .ov-start{font-size:9px;color:var(--fg4);margin-top:2px;font-family:'Sora';}
+
+/* Cells */
 .c{display:inline-flex;align-items:center;justify-content:center;width:84%;height:30px;border-radius:7px;cursor:pointer;position:relative;transition:all .2s;user-select:none;font-family:'Sora';}
 .c:hover{transform:scale(1.12);}
 .c.d.docs{background:var(--docs-bg);border:1px solid var(--docs-bd);}
@@ -98,6 +113,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .c.d.complete-done .cl{color:var(--accent);text-shadow:0 0 8px var(--accent-glow);}
 .c.p .cl{color:transparent;}
 .c.p.empty .cl{color:transparent;}
+/* Tooltip */
 .c-tip{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--bg1);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;font-size:11px;color:var(--fg);z-index:20;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.5);min-width:150px;max-width:230px;white-space:normal;line-height:1.5;backdrop-filter:blur(16px);}
 .c-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border2);}
 .c:hover .c-tip{display:block;}
@@ -113,6 +129,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .tip-status.blocked{color:var(--blocked);}
 .tip-no{color:var(--fg4);font-style:italic;}
 .c-due{position:absolute;top:-7px;right:-8px;font-size:7px;background:var(--bg4);color:var(--fg3);padding:1px 5px;border-radius:4px;font-weight:600;white-space:nowrap;}
+
+/* Urgency */
 @keyframes bl1{0%,100%{opacity:1}50%{opacity:.55}}
 @keyframes bl2{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes bl3{0%,100%{opacity:1}50%{opacity:.3}}
@@ -123,6 +141,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .uc{animation:bl3 .4s ease-in-out infinite,blc .4s ease-in-out infinite;border-color:var(--danger)!important;}
 .row-over{background:var(--danger-bg)!important;}
 .over-badge{font-family:'Sora';font-size:8px;color:var(--danger);font-weight:800;margin-left:6px;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;background:var(--danger-bg);border-radius:4px;}
+
+/* === MOBILE OVERVIEW === */
 .mob-ov{display:none;}
 .mob-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:14px;padding:18px;margin-bottom:12px;transition:all .2s;}
 .mob-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
@@ -157,8 +177,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .mob-btn.drive{background:#0ea5e9;}
 .mob-btn.nc{background:var(--nc);}
 .mob-btn.ref{background:var(--bg4);color:var(--fg3);}
+
+/* === WORKS SECTION TITLE === */
 .sec-title{font-family:'Sora';font-size:18px;font-weight:700;color:var(--fg);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .sec-title::before{content:'';display:inline-block;width:3px;height:18px;background:var(--accent);border-radius:2px;}
+
+/* === WORKS CARDS === */
 .cards-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
 .wk{background:var(--glass);backdrop-filter:blur(20px);border-radius:var(--card-r);padding:22px;border:1px solid var(--border2);transition:all .3s;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.15);}
 .wk:hover{border-color:rgba(0,238,255,.2);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.3),0 0 24px var(--accent-glow);}
@@ -194,6 +218,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .wk-btn.nc{background:var(--nc);}
 .wk-btn.ref{background:var(--bg4);color:var(--fg3);}
 .mob-works{display:none;}
+
+/* === CONTEXT MENU === */
 .ctx{position:fixed;z-index:300;background:var(--bg1);border:1px solid var(--border2);border-radius:14px;padding:6px;min-width:210px;box-shadow:0 20px 56px rgba(0,0,0,.5),0 0 1px rgba(0,238,255,.1);backdrop-filter:blur(24px);animation:ctx-in .15s ease;}
 @keyframes ctx-in{from{opacity:0;transform:scale(.95) translateY(-4px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .ctx-title{font-family:'Sora';font-size:10px;color:var(--fg4);font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:6px 10px 4px;}
@@ -206,6 +232,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .ctx-item.active-item{color:var(--active);}
 .ctx-item.done-item{color:var(--done);}
 .ctx-item.blocked-item{color:var(--blocked);}
+
+/* === MODAL === */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;}
 .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:90%;max-width:400px;background:var(--bg1);border:1px solid var(--border2);border-radius:20px;padding:30px;box-shadow:0 28px 72px rgba(0,0,0,.5);backdrop-filter:blur(24px);}
 .modal h3{font-family:'Sora';font-size:18px;font-weight:700;margin-bottom:4px;}
@@ -225,6 +253,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .m-tag-cb{display:none;}
 .m-tag-label{padding:5px 12px;border-radius:100px;border:1px solid var(--border2);color:var(--fg3);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500;}
 .m-tag-cb:checked+.m-tag-label{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:600;}
+
+/* === DETAIL === */
 .back{background:none;border:none;color:var(--accent);cursor:pointer;padding:4px 0;font-size:13px;font-weight:600;font-family:'Sora';margin-bottom:16px;}
 .back:hover{text-decoration:underline;}
 .dt{font-family:'Sora';font-size:28px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,var(--fg),var(--fg2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -272,6 +302,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .ref-c .rd{font-size:11px;color:var(--fg4);margin-top:1px;}
 .ref-c a{font-size:11px;color:var(--accent);text-decoration:none;padding:5px 12px;border:1px solid var(--accent);border-radius:8px;flex-shrink:0;font-weight:600;font-family:'Sora';}
 .ref-c a:hover{background:var(--accent-bg);}
+
+/* Settings */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:200;display:flex;justify-content:center;align-items:flex-start;padding:40px 16px;overflow-y:auto;}
 .sp{background:var(--bg1);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:720px;max-height:calc(100vh - 80px);overflow-y:auto;padding:32px;}
 .sp-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
@@ -308,6 +340,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .sdot.pending{background:var(--fg4);}
 .sdot.blocked{background:var(--blocked);}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:12px 24px;font-size:12px;color:var(--fg);z-index:999;box-shadow:0 12px 40px rgba(0,0,0,.4);animation:toast-in .3s ease,toast-out .3s ease 1.7s forwards;font-family:'Sora';font-weight:500;backdrop-filter:blur(12px);}
+/* Pub selector popup */
 .pub-sel{position:fixed;z-index:250;background:var(--bg1);border:1px solid var(--border2);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.5);backdrop-filter:blur(24px);animation:ctx-in .15s ease;}
 .pub-sel-title{font-family:'Sora';font-size:11px;color:var(--fg4);font-weight:600;padding:6px 10px 4px;text-transform:uppercase;letter-spacing:.04em;}
 .pub-sel-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--fg2);transition:all .12s;text-decoration:none;}
@@ -388,6 +421,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzID-iZZcR3leIGQJjUeFzz
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
 const DEFAULT_N=JSON.parse(JSON.stringify(N));
+N=[]; // ✅ 시트 데이터 로드 전까지 빈 배열 (하드코딩 데이터 표시 방지)
 
 // Convert Sheets flat data → N[] format
 function sheetsToN(data){
@@ -446,7 +480,7 @@ let isSaving=false;
 let hasLocalData=false;
 
 async function loadFromSheets(force){
-  if(!SHEETS_ENABLED||isSaving)return;
+  if(!SHEETS_ENABLED||isSaving||pendingSave)return; // ✅ pendingSave 중에는 폴링 차단
   if(hasLocalData&&!force)return;
   syncStatus='syncing';updateSyncBadge();
   try{
@@ -454,27 +488,34 @@ async function loadFromSheets(force){
     const data=await res.json();
     if(data.error){syncStatus='error';updateSyncBadge();return;}
     if(data.novels&&data.novels.length>0){
+      // 로컬 pubs 데이터 백업
       const localPubs={};
       N.forEach(n=>{localPubs[n.id]=n.pubs||[];});
       
+      // Sheets 데이터로 N 업데이트
       N=sheetsToN(data);
       
+      // Sheets pubs와 로컬 pubs를 merge (둘 다 보존)
       N.forEach(n=>{
-        const sheetsPubs=n.pubs||[];
-        const localPubsForN=localPubs[n.id]||[];
+        const sheetsPubs=n.pubs||[];  // Sheets에서 가져온 pubs
+        const localPubsForN=localPubs[n.id]||[];  // 로컬 pubs
         
+        // Sheets pubs를 기반으로 시작
         const merged=[...sheetsPubs];
         
+        // 로컬 pubs 추가 (중복 제거)
         localPubsForN.forEach(localPub=>{
           if(!localPub.name||!localPub.url)return;
           const exists=merged.some(p=>p.name===localPub.name&&p.url===localPub.url);
           if(!exists){merged.push(localPub);}
         });
         
+        // 결과 저장
         n.pubs=merged;
         while(n.pubs.length<5)n.pubs.push({name:'',url:''});
       });
       
+// localStorage 제거됨
       hasLocalData=true;
       R();syncStatus='synced';
     } else if(!hasLocalData){
@@ -505,16 +546,20 @@ async function saveToSheets(){
 // Debounced save
 let saveTimer=null;
 // ===== CRUD: Google Sheets 기반 =====
+let pendingSave=false;
 async function persist(){
   hasLocalData=true;
+  R(); // ✅ 즉시 UI 반영 (삭제/추가 결과를 바로 보여줌)
   if(SHEETS_ENABLED){
-    isSaving = true; // 수정됨: 동기화 덮어쓰기 방지
+    pendingSave=true; // ✅ 폴링 차단 (레이스 컨디션 방지)
     clearTimeout(saveTimer);
     saveTimer=setTimeout(async ()=>{
       try{
         await saveToSheets();
+        pendingSave=false;
         await loadFromSheets(true);
       }catch(e){
+        pendingSave=false;
         console.error('persist() 오류:', e);
         syncStatus='error';
         updateSyncBadge();
@@ -526,6 +571,7 @@ function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합�
 async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await saveToSheets();await loadFromSheets(true);rSet();toast('동기화 완료');}
 
 let cv="overview",at=new Set(),ex=new Set(),dk=true;
+// localStorage 제거됨
 if(!dk)document.documentElement.setAttribute('data-theme','light');
 const TD=new Date();
 
@@ -556,9 +602,9 @@ function showCtx(e,nid,sid){e.preventDefault();e.stopPropagation();ctxNid=nid;ct
   ctx.innerHTML=h;ctx.classList.remove('hidden');let x=e.clientX,y=e.clientY;const w=ctx.offsetWidth,ht=ctx.offsetHeight;if(x+w>window.innerWidth)x=window.innerWidth-w-8;if(y+ht>window.innerHeight)y=window.innerHeight-ht-8;ctx.style.left=x+'px';ctx.style.top=y+'px';}
 function hideCtx(){document.getElementById('ctx-menu').classList.add('hidden');}
 document.addEventListener('click',hideCtx);document.addEventListener('scroll',hideCtx,true);
-function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();R();persist();const labels={pending:'대기',active:'진행중',done:'DONE',blocked:'BLOCKED'};toast(`${S.find(x=>x.id===ctxSid).l} → ${labels[s]}`);} // 수정됨: R() 추가
+function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();persist();const labels={pending:'대기',active:'진행중',done:'DONE',blocked:'BLOCKED'};toast(`${S.find(x=>x.id===ctxSid).l} → ${labels[s]}`);}
 function ctxMemo(){hideCtx();const n=N.find(x=>x.id===ctxNid);const info=n.st[ctxSid];const stage=S.find(x=>x.id===ctxSid);showModal(`<h3>✏️ 메모</h3><div class="sub">${n.title} — ${stage.l}</div><label>메모</label><textarea id="m-memo" placeholder="이 단계에 대한 메모...">${info.n||''}</textarea><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveMemo()">저장</button></div>`);}
-function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();R();persist();toast('메모 저장됨');} // 수정됨: R() 추가
+function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();persist();toast('메모 저장됨');}
 function ctxOpen(){hideCtx();window.open(N.find(x=>x.id===ctxNid).sl[ctxSid].u,'_blank');}
 function ctxCopy(){hideCtx();navigator.clipboard.writeText(N.find(x=>x.id===ctxNid).sl[ctxSid].u).then(()=>toast('URL 복사됨')).catch(()=>toast('복사 실패'));}
 function ctxEdit(){hideCtx();cellDbl(null,ctxNid,ctxSid);}
@@ -575,10 +621,10 @@ let titleTimer=null;
 function handleTitle(e,nid){if(e)e.stopPropagation();if(titleTimer){clearTimeout(titleTimer);titleTimer=null;titleDbl(e,nid);return;}titleTimer=setTimeout(()=>{titleTimer=null;titleClick(nid);},300);}
 function titleClick(nid){const n=N.find(x=>x.id===nid);if(n.dir)window.open(n.dir,'_blank');else titleDbl(null,nid);}
 function titleDbl(e,nid){if(e)e.preventDefault();e&&e.stopPropagation();const n=N.find(x=>x.id===nid);showModal(`<h3>✏️ 작품 편집</h3><div class="sub">${n.title}</div><label>제목</label><input type="text" id="m-title" value="${n.title}"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes(n.tags)}</div><label>분량</label><input type="text" id="m-len" value="${n.len}" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="${n.dir||''}" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${n.sd}"/><label>목표 완료일</label><input type="date" id="m-ed" value="${n.ed}"/><div class="m-btns" style="justify-content:space-between"><button class="m-btn m-danger" onclick="deleteNovel(${nid})">삭제</button><div style="display:flex;gap:8px"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveTitleEdit(${nid})">저장</button></div></div>`);}
-function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();R();persist();toast('저장됨');} // 수정됨: R() 추가
-function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();R();persist();toast('삭제됨');} // 수정됨: R() 추가
-function addNovel(){const newId=Date.now();const today=new Date().toISOString().slice(0,10);showModal(`<h3>➕ 새 작품 추가</h3><div class="sub">새 프로젝트를 시작합니다</div><label>제목</label><input type="text" id="m-title" value="" placeholder="작품 제목"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes([])}</div><label>분량</label><input type="text" id="m-len" value="" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${today}"/><label>목표 완료일</label><input type="date" id="m-ed" value=""/><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveNewNovel(${newId})">추가</button></div>`);} // 수정됨: Date.now() 추가
-function saveNewNovel(newId){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';const emptyPubs=[];for(let i=0;i<5;i++)emptyPubs.push({name:'',url:''});N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:emptyPubs,up:new Date().toISOString().slice(0,10)});closeModal();R();persist();toast(`"${title}" 추가됨`);} // 수정됨: R() 추가
+function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();persist();toast('저장됨');}
+function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();hideDet();persist();toast('삭제됨 (ID: '+nid+')');}
+function addNovel(){const today=new Date().toISOString().slice(0,10);showModal(`<h3>➕ 새 작품 추가</h3><div class="sub">새 프로젝트를 시작합니다</div><label>제목</label><input type="text" id="m-title" value="" placeholder="작품 제목"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes([])}</div><label>분량</label><input type="text" id="m-len" value="" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${today}"/><label>목표 완료일</label><input type="date" id="m-ed" value=""/><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveNewNovel()">추가</button></div>`);}
+function saveNewNovel(){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const newId=N.length?Math.max(...N.map(x=>x.id))+1:1;const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';const emptyPubs=[];for(let i=0;i<5;i++)emptyPubs.push({name:'',url:''});N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:emptyPubs,up:new Date().toISOString().slice(0,10)});closeModal();persist();toast(`"${title}" 추가됨 (ID: ${newId})`);}
 
 // Cell click/dblclick
 let cellTimer=null;
@@ -629,14 +675,15 @@ async function savePubEdit(nid){
   n.st.publishing.d=document.getElementById('m-due').value;
   recomp(n);
   closeModal();
-  R();
   persist();
+  R();
   toast('저장 중…');
   await saveToSheets();
+  // ← 중요! Sheets에 저장 후 최신 데이터를 다시 로드해서 PC에 반영
   await loadFromSheets(true);
   toast(syncStatus==='synced'?'발행 정보 저장됨':'저장 오류 — 다시 시도해주세요');
 }
-function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();R();persist();toast('저장됨');} // 수정됨: R() 추가
+function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();toast('저장됨');}
 
 // Settings
 function openSet(){document.getElementById('set-ov').classList.remove('hidden');document.body.style.overflow='hidden';rSet();}
@@ -658,6 +705,7 @@ function showDet(id){const n=N.find(x=>x.id===id);document.getElementById('main-
   dv.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start"><button class="back" onclick="hideDet()">← 돌아가기</button><button class="icon-btn" onclick="hideDet();titleDbl(null,${id})" title="편집" style="font-size:14px">✏️</button></div><div class="dt">${n.title}</div><div class="d-tags">${n.tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div><div class="d-meta"><span>분량 ${n.len}</span><span>시작 ${n.sd}</span><span>목표 ${n.ed}</span></div><div class="d-links">${lk}</div>${tl}${refs}`;}
 function hideDet(){document.getElementById('det-v').classList.add('hidden');document.getElementById('main-view').classList.remove('hidden');}
 
+// Tooltip
 function tipHtml(n,st,info){const statusLabels={done:'DONE',active:'진행중',pending:'대기',blocked:'BLOCKED'};let h=`<div class="tip-stage">${st.i} ${st.l}</div><div class="tip-status ${info.s}">${statusLabels[info.s]}</div>`;if(info.n)h+=`<div class="tip-memo">${info.n}</div>`;if(info.d){const days=dab(TD,new Date(info.d));const cls=days<0?'over':days<=5?'soon':'';const txt=days<0?`${Math.abs(days)}일 초과`:`${days}일 남음`;h+=`<div class="tip-due ${cls}">📅 ${info.d} (${txt})</div>`;}if(!info.n&&!info.d)h+=`<div class="tip-no">메모 없음</div>`;return h;}
 
 // Render
@@ -668,10 +716,80 @@ function R(){
   // Desktop Overview
   let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
   ns.forEach((n, idx)=>{let rU='';S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){const u=uc(info.d);if(u==='uc'||u==='u3')rU='row-over';}});const dl=dli(n);const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';const hasDir=!!n.dir;
-    o+=`<tr class="${rU}"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx + 1}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
+    o+=`<tr class="${rU}"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${n.id}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
     S.forEach(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';const isE=!sl?.u&&!info.n;let cc='c ';if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}else if(info.s==='active')cc+=`a ${uc(info.d)}`;else if(info.s==='blocked')cc+='b';else cc+=`p${isE?' empty':''}`;let lb='';if(st.id==='complete'&&info.s==='done')lb='DONE';else if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';}else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCKED';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;});o+=`</tr>`;});
   o+=`</tbody></table></div>`;
 
   // Mobile Overview
   let mo='<div class="mob-ov">';
-  ns.forEach((n, idx)=>{const dl=dli(n);const cs=S.find(x=>x.id===n.cs);const hasDir=!!n.dir;const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const aD=n.st[n.cs]?.d||'';const uCls=uc(a
+  ns.forEach((n, idx)=>{const dl=dli(n);const cs=S.find(x=>x.id===n.cs);const hasDir=!!n.dir;const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
+    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${n.id}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';const mIsE=!sl?.u&&!info.n;if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+=`p${mIsE?' empty':''}`;const lb=st.id==='complete'&&info.s==='done'?'DONE':info.s==='active'?'NOW':info.s==='blocked'?'BLOCKED':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;}).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
+  mo+='</div>';
+  document.getElementById('ov-v').innerHTML=o+mo;
+
+  // Desktop Works
+  let w=`<div class="sec-title">진행 상세 분석</div><div class="cards-grid">`;
+  ns.forEach((n, idx)=>{const prog=gp(n);const cs=S.find(x=>x.id===n.cs);const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const note=n.st[n.cs]?.n||'';const dl=dli(n);const dlC=dl.st==='overdue'?'var(--danger)':dl.st==='warn'?'var(--warn)':'var(--done)';const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const rC=n.refs?n.refs.length:0;const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="wk-btn docs" onclick="event.stopPropagation()">📄 Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">📁 Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">✒️ NC</a>`;if(rC)btns+=`<span class="wk-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎 ${rC}</span>`;const dueI=aD?`<div class="wk-gi"><span class="wk-gl">현 단계 마감</span><span class="wk-gv ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</span></div>`:'';
+    w+=`<div class="wk ${tC} ${uCls}" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${n.id}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>전척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">시작일</span><span class="wk-gv">${n.sd}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dlT}</span></div>${dueI}</div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--fg4);margin-bottom:3px;font-family:Sora"><span>일정</span><span style="color:${dlC}">${dl.p}%</span></div><div class="dl-bar"><div class="dl-fill" style="width:${dl.p}%;background:${dlC}"></div></div></div><div class="wk-btns">${btns}</div></div>`;});
+  w+='</div>';
+
+  // Mobile Works
+  let mw='<div class="mob-works">';
+  ns.forEach((n, idx)=>{const cs=S.find(x=>x.id===n.cs);const dl=dli(n);const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const note=n.st[n.cs]?.n||'';let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
+    mw+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${n.id}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div>${note?`<div class="wk-note" style="font-size:11px;padding:8px 10px;margin-bottom:8px">${note}</div>`:''}<div class="mob-info"><div><span class="k">진행</span><div class="v">${gp(n)}% · 일정 ${dl.p}%</div></div><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlT}</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
+  mw+='</div>';
+  document.getElementById('wk-v').innerHTML=w+mw;
+}
+
+rp();R();
+if(!dk)document.getElementById('thbtn').textContent='☀️';
+updateSyncBadge();
+// ✅ Google Sheets에서 데이터 로드 (초기 렌더링은 loadFromSheets 내에서 R()로 수행)
+loadFromSheets(true).then(()=>{
+  if(N.length===0){
+    // Sheets 연결 실패 시 기본 데이터 로드
+    N=JSON.parse(JSON.stringify(DEFAULT_N));
+    R();
+    toast('오프라인 모드: 기본 데이터 표시');
+  }
+});
+
+// ===== 자동 폴링: 10초 주기 (Visibility API 포함) =====
+let pollingInterval=null;
+
+function startPolling(){
+  if(pollingInterval)return;
+  pollingInterval=setInterval(async ()=>{
+    if(!isSaving && !document.hidden){
+      try{
+        await loadFromSheets(true);
+      }catch(e){
+        console.warn('폴링 중 오류:', e);
+      }
+    }
+  },10000);  // 10초 주기
+  syncStatus='synced';updateSyncBadge();
+}
+
+function stopPolling(){
+  if(pollingInterval){
+    clearInterval(pollingInterval);
+    pollingInterval=null;
+  }
+}
+
+// 탭 전환 감지 (Visibility API)
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    stopPolling();  // 백그라운드: 폴링 중지
+    syncStatus='local';updateSyncBadge();
+  }else{
+    startPolling();  // 포그라운드: 폴링 재개
+  }
+});
+
+// 초기 폴링 시작
+startPolling();
+</script>
+</body>
+</html>
