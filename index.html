@@ -1024,7 +1024,6 @@
         // ===== 상세 패널 렌더링 (iPad/PC) =====
         function renderDetailPanel() {
             const panel = document.getElementById('detail-panel');
-            const detailContent = document.getElementById('detail-content');
 
             if (!selectedNovelId) {
                 panel.innerHTML = '<div class="detail-panel-empty">작품을 선택해주세요</div>';
@@ -1037,72 +1036,70 @@
             const stages = novelstagesData.filter(ns => ns.novelId === selectedNovelId);
             const tagsHtml = (novel.tags || []).map(tagName => `<span class="tag">${tagName}</span>`).join('');
 
-            detailContent.innerHTML = `
-                <div class="detail-title">${novel.title}</div>
+            panel.innerHTML = `
+                <div class="detail-content">
+                    <div class="detail-title">${novel.title}</div>
 
-                <div class="detail-field">
-                    <label class="detail-label">태그</label>
-                    <div class="detail-value">${tagsHtml || '없음'}</div>
-                </div>
+                    <div class="detail-field">
+                        <label class="detail-label">태그</label>
+                        <div class="detail-value">${tagsHtml || '없음'}</div>
+                    </div>
 
-                <div class="detail-field">
-                    <label class="detail-label">진행도</label>
-                    <div class="detail-value">${novel.progress}%</div>
-                </div>
+                    <div class="detail-field">
+                        <label class="detail-label">진행도</label>
+                        <div class="detail-value">${novel.progress}%</div>
+                    </div>
 
-                <div class="detail-field">
-                    <label class="detail-label">시작일</label>
-                    <div class="detail-value">${novel.startDate || '미정'}</div>
-                </div>
+                    <div class="detail-field">
+                        <label class="detail-label">시작일</label>
+                        <div class="detail-value">${novel.startDate || '미정'}</div>
+                    </div>
 
-                <div class="detail-field">
-                    <label class="detail-label">마감일</label>
-                    <div class="detail-value" onclick="editField('dueDate', ${novel.id})">${novel.dueDate || '미정'}</div>
-                </div>
+                    <div class="detail-field">
+                        <label class="detail-label">마감일</label>
+                        <div class="detail-value" onclick="editField('dueDate', ${novel.id})">${novel.dueDate || '미정'}</div>
+                    </div>
 
-                <div class="detail-field">
-                    <label class="detail-label">예상 길이</label>
-                    <div class="detail-value">${novel.length || '미정'}</div>
-                </div>
+                    <div class="detail-field">
+                        <label class="detail-label">예상 길이</label>
+                        <div class="detail-value">${novel.length || '미정'}</div>
+                    </div>
 
-                <div class="detail-field">
-                    <label class="detail-label">메모</label>
-                    <div class="detail-value" onclick="editField('note', ${novel.id})">${novel.note || '메모 없음'}</div>
-                </div>
+                    <div class="detail-field">
+                        <label class="detail-label">메모</label>
+                        <div class="detail-value" onclick="editField('note', ${novel.id})">${novel.note || '메모 없음'}</div>
+                    </div>
 
-                <div class="detail-field">
-                    <label class="detail-label">단계별 상태</label>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${stagesData.map(stage => {
-                            const ns = stages.find(s => s.stageId === stage.id);
-                            const status = ns?.status || '';
-                            return `
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background-color: var(--bg-tertiary); border-radius: 6px;">
-                                    <span>${stage.icon} ${stage.name}</span>
-                                    <span style="
-                                        padding: 4px 8px;
-                                        border-radius: 4px;
-                                        font-weight: 600;
-                                        ${status === '完' ? 'color: var(--status-done); background-color: rgba(65, 105, 225, 0.2);' : ''}
-                                        ${status === '中' ? 'color: var(--status-prog); background-color: rgba(255, 165, 0, 0.2);' : ''}
-                                        ${status === '初' ? 'color: var(--status-start); background-color: rgba(255, 215, 0, 0.2);' : ''}
-                                        ${status === '' ? 'color: var(--text-tertiary);' : ''}
-                                    ">${status || '-'}</span>
-                                </div>
-                            `;
-                        }).join('')}
+                    <div class="detail-field">
+                        <label class="detail-label">단계별 상태</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${stagesData.map(stage => {
+                                const ns = stages.find(s => s.stageId === stage.id);
+                                const status = ns?.status || '';
+                                return `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background-color: var(--bg-tertiary); border-radius: 6px;">
+                                        <span>${stage.icon} ${stage.name}</span>
+                                        <span style="
+                                            padding: 4px 8px;
+                                            border-radius: 4px;
+                                            font-weight: 600;
+                                            ${status === '完' ? 'color: var(--status-done); background-color: rgba(65, 105, 225, 0.2);' : ''}
+                                            ${status === '中' ? 'color: var(--status-prog); background-color: rgba(255, 165, 0, 0.2);' : ''}
+                                            ${status === '初' ? 'color: var(--status-start); background-color: rgba(255, 215, 0, 0.2);' : ''}
+                                            ${status === '' ? 'color: var(--text-tertiary);' : ''}
+                                        ">${status || '-'}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button onclick="editNovel(${novel.id})">수정</button>
+                        <button onclick="deleteNovel(${novel.id})" style="background-color: rgba(239, 68, 68, 0.2); color: #ef4444;">삭제</button>
                     </div>
                 </div>
-
-                <div class="detail-actions">
-                    <button onclick="editNovel(${novel.id})">수정</button>
-                    <button onclick="deleteNovel(${novel.id})" style="background-color: rgba(239, 68, 68, 0.2); color: #ef4444;">삭제</button>
-                </div>
             `;
-
-            detailContent.classList.remove('hidden');
-            panel.innerHTML = '';
-            panel.appendChild(detailContent);
         }
 
         // ===== 작품 선택 =====
