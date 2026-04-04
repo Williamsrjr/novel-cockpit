@@ -1,5 +1,5 @@
 # Novel Cockpit
-### 디버깅 및 개선사항 로그: https://docs.google.com/spreadsheets/d/1iqu3m0_fnIk2_VcCk9qBh1i8xoawz9-39JIjSSNh9BE/edit?gid=0#gid=0
+### 디버깅 및 개선사항 로그(https://docs.google.com/spreadsheets/d/1iqu3m0_fnIk2_VcCk9qBh1i8xoawz9-39JIjSSNh9BE/edit?gid=0#gid=0)
 ## 동기화
 1분 자동 동기화 시행중(2026/4/5
 
