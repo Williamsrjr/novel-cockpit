@@ -354,6 +354,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 @keyframes toast-in{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @keyframes toast-out{from{opacity:1}to{opacity:0}}
 .hidden{display:none!important;}
+body.no-blink .u1,body.no-blink .u2,body.no-blink .u3,body.no-blink .uc{animation:none!important;}
 
 @media(max-width:768px){
   .app{padding:16px 12px;}
@@ -424,23 +425,24 @@ const DEFAULT_N=JSON.parse(JSON.stringify(N));
 N=[]; // ✅ 시트 데이터 로드 전까지 빈 배열 (하드코딩 데이터 표시 방지)
 
 // Convert Sheets flat data → N[] format
-function fmtD(v){if(!v)return'';const s=String(v);return s.length>=10?s.slice(0,10):s;} // ✅ ISO날짜→YYYY-MM-DD
+function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso[0];const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);} // ✅ 다양한 날짜 포맷 안전 처리
+function clV(v){return(!v||v==='NaN'||v==='undefined'||v==='null')?'':String(v);}
 function sheetsToN(data){
   const novels=data.novels.map(row=>({
-    id:row.id, title:row.title, tags:row.tags||[],
-    cs:row.cs, len:row.len, sd:fmtD(row.sd), ed:fmtD(row.ed), dir:row.dir,
-    links:{gdoc:row.gdoc||'',gdrive:row.gdrive||'',nc:row.nc||''},
+    id:row.id, title:row.title, tags:Array.isArray(row.tags)?row.tags:(typeof row.tags==='string'&&row.tags&&row.tags!=='NaN'?row.tags.split(',').map(t=>t.trim()):[]),
+    cs:clV(row.cs)||'ideation', len:clV(row.len), sd:fmtD(row.sd), ed:fmtD(row.ed), dir:clV(row.dir),
+    links:{gdoc:clV(row.gdoc),gdrive:clV(row.gdrive),nc:clV(row.nc)},
     sl:{}, st:{}, refs:[], pubs:[], up:fmtD(row.up)
   }));
   // Fill stages
   novels.forEach(n=>{
     S.forEach(s=>{n.sl[s.id]={u:'',t:''};n.st[s.id]={s:'pending',n:'',d:''};});
     data.stages.filter(s=>s.novelId===n.id).forEach(s=>{
-      n.st[s.stageId]={s:s.status||'pending',n:s.note||'',d:fmtD(s.due)};
-      n.sl[s.stageId]={u:s.url||'',t:s.tool||''};
+      n.st[s.stageId]={s:clV(s.status)||'pending',n:clV(s.note),d:fmtD(s.due)};
+      n.sl[s.stageId]={u:clV(s.url),t:clV(s.tool)};
     });
-    n.refs=data.refs.filter(r=>r.novelId===n.id).map(r=>({i:r.icon,n:r.name,d:r.desc,u:r.url}));
-    n.pubs=(data.pubs||[]).filter(p=>p.novelId===n.id).map(p=>({name:p.name,url:p.url}));
+    n.refs=data.refs.filter(r=>r.novelId===n.id).map(r=>({i:clV(r.icon),n:clV(r.name),d:clV(r.desc),u:clV(r.url)}));
+    n.pubs=(data.pubs||[]).filter(p=>p.novelId===n.id).map(p=>({name:clV(p.name),url:clV(p.url)}));
     while(n.pubs.length<5)n.pubs.push({name:'',url:''});
   });
   return novels;
@@ -450,7 +452,7 @@ function sheetsToN(data){
 function nToSheets(novels){
   const novelsFlat=novels.map(n=>({
     id:n.id,title:n.title,tags:n.tags,cs:n.cs,len:n.len,sd:n.sd,ed:n.ed,dir:n.dir,
-    links:n.links,up:n.up
+    gdoc:n.links.gdoc||'',gdrive:n.links.gdrive||'',nc:n.links.nc||'',up:n.up
   }));
   const stages=[];
   novels.forEach(n=>{
@@ -489,9 +491,11 @@ async function loadFromSheets(force){
     const data=await res.json();
     if(data.error){syncStatus='error';updateSyncBadge();return;}
     if(data.novels&&data.novels.length>0){
-      // 로컬 pubs 데이터 백업
+      // 로컬 pubs 데이터 백업 (pendingSave 중에만 merge)
       const localPubs={};
-      N.forEach(n=>{localPubs[n.id]=n.pubs||[];});
+      if(pendingSave){
+        N.forEach(n=>{localPubs[n.id]=n.pubs||[];});
+      }
       
       // Sheets 데이터로 N 업데이트
       const newN=sheetsToN(data);
@@ -501,23 +505,19 @@ async function loadFromSheets(force){
       });
       N=newN;
       
-      // Sheets pubs와 로컬 pubs를 merge (둘 다 보존)
+      // pendingSave 중일 때만 로컬 pubs를 merge (아닐 때는 시트 데이터만 사용)
       N.forEach(n=>{
-        const sheetsPubs=n.pubs||[];  // Sheets에서 가져온 pubs
-        const localPubsForN=localPubs[n.id]||[];  // 로컬 pubs
-        
-        // Sheets pubs를 기반으로 시작
-        const merged=[...sheetsPubs];
-        
-        // 로컬 pubs 추가 (중복 제거)
-        localPubsForN.forEach(localPub=>{
-          if(!localPub.name||!localPub.url)return;
-          const exists=merged.some(p=>p.name===localPub.name&&p.url===localPub.url);
-          if(!exists){merged.push(localPub);}
-        });
-        
-        // 결과 저장
-        n.pubs=merged;
+        if(pendingSave){
+          const sheetsPubs=n.pubs||[];
+          const localPubsForN=localPubs[n.id]||[];
+          const merged=[...sheetsPubs];
+          localPubsForN.forEach(localPub=>{
+            if(!localPub.name||!localPub.url)return;
+            const exists=merged.some(p=>p.name===localPub.name&&p.url===localPub.url);
+            if(!exists){merged.push(localPub);}
+          });
+          n.pubs=merged;
+        }
         while(n.pubs.length<5)n.pubs.push({name:'',url:''});
       });
       
@@ -573,10 +573,9 @@ async function persist(){
     },800);
   }
 }
-function resetData(){if(confirm('모든 데이터를 초기 상태로 리셋합니까?')){N=JSON.parse(JSON.stringify(DEFAULT_N));persist();rSet();toast('초기화 완료');}}
 async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await saveToSheets();await loadFromSheets(true);rSet();toast('동기화 완료');}
 
-let cv="overview",at=new Set(),ex=new Set(),dk=true;
+let cv="overview",at=new Set(),ex=new Set(),dk=true,blinkOn=true,hideDone=false;
 // localStorage 제거됨
 if(!dk)document.documentElement.setAttribute('data-theme','light');
 const TD=new Date();
@@ -587,11 +586,13 @@ const dab=(a,b)=>Math.round((b-a)/864e5);
 function dli(n){const s=new Date(n.sd),e=new Date(n.ed),t=dab(s,e),el=dab(s,TD),r=dab(TD,e),p=Math.min(100,Math.max(0,Math.round((el/t)*100)));let st="ok";if(r<0)st="overdue";else if(p-gp(n)>20)st="warn";return{r,p,st};}
 function uc(d){if(!d)return'';const x=dab(TD,new Date(d));if(x<0)return'uc';if(x<=2)return'u3';if(x<=5)return'u2';if(x<=10)return'u1';return'';}
 function recomp(n){for(let i=0;i<S.length;i++){if(n.st[S[i].id].s==='active'){n.cs=S[i].id;return;}}let l='ideation';for(let i=0;i<S.length;i++){if(n.st[S[i].id].s==='done')l=S[i].id;else break;}n.cs=l;}
-function gf(){if(at.size===0)return N;return N.filter(n=>[...at].some(t=>n.tags.includes(t)));}
+function gf(){let r=N;if(hideDone)r=r.filter(n=>n.cs!=='complete'&&n.cs!=='publishing'||Object.values(n.st).some(s=>s.s!=='done'));if(at.size===0)return r;return r.filter(n=>[...at].some(t=>n.tags.includes(t)));}
 function tt(t){if(at.has(t))at.delete(t);else at.add(t);rp();R();}
 function sv(v){cv=v;document.querySelectorAll('.nav-t').forEach(b=>b.classList.toggle('on',b.dataset.v===v));document.getElementById('ov-v').classList.toggle('hidden',v!=='overview');document.getElementById('wk-v').classList.toggle('hidden',v!=='works');R();}
 function rp(){document.getElementById('pills').innerHTML=TAGS.map(t=>`<button class="pill ${at.has(t)?'on':''}" onclick="tt('${t}')">${t}</button>`).join('');}
 function togTheme(){dk=!dk;document.documentElement.setAttribute("data-theme",dk?"dark":"light");document.getElementById("thbtn").textContent=dk?"🌙":"☀️";}
+function togBlink(){blinkOn=!blinkOn;document.body.classList.toggle('no-blink',!blinkOn);rSet();}
+function togHideDone(){hideDone=!hideDone;R();rSet();}
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
 // Context Menu
@@ -681,12 +682,20 @@ async function savePubEdit(nid){
   n.st.publishing.d=document.getElementById('m-due').value;
   recomp(n);
   closeModal();
-  persist();
+  hasLocalData=true;
   R();
   toast('저장 중…');
-  await saveToSheets();
-  // ← 중요! Sheets에 저장 후 최신 데이터를 다시 로드해서 PC에 반영
-  await loadFromSheets(true);
+  if(SHEETS_ENABLED){
+    pendingSave=true;
+    try{
+      await saveToSheets();
+      await loadFromSheets(true);
+      pendingSave=false;
+    }catch(e){
+      pendingSave=false;
+      syncStatus='error';updateSyncBadge();
+    }
+  }
   toast(syncStatus==='synced'?'발행 정보 저장됨':'저장 오류 — 다시 시도해주세요');
 }
 function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();toast('저장됨');}
@@ -700,7 +709,7 @@ function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;persist();}
 function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;persist();rSet();}
 function rSet(){let h=`<div class="sp-h"><h2>⚙️ 관리</h2><button class="sp-x" onclick="closeSet()">✕</button></div><div class="sp-sec"><div class="sp-st">🎨 화면</div><div class="sp-row"><div><div class="sp-lbl">다크 모드</div></div><label class="tog"><input type="checkbox" ${dk?'checked':''} onchange="togTheme()"><span class="tog-s"></span></label></div></div><div class="sp-sec"><div class="sp-st">📋 작품 관리</div><table class="mt"><thead><tr><th>작품</th><th>현재</th><th>시작일</th><th>목표일</th><th></th></tr></thead><tbody>`;
   N.forEach(n=>{const cs=S.find(x=>x.id===n.cs)||S[0];const isE=ex.has(n.id);h+=`<tr><td><span class="mt-t">${n.title}</span></td><td><span class="sdot ${n.st[n.cs].s}"></span> ${cs.l}</td><td><input type="date" class="mt-i" value="${n.sd}" onchange="uND(${n.id},'sd',this.value)"></td><td><input type="date" class="mt-i" value="${n.ed}" onchange="uND(${n.id},'ed',this.value)"></td><td><button class="eb" onclick="tExp(${n.id})">${isE?'접기':'▾'}</button></td></tr>`;if(isE){h+=`<tr><td colspan="5" style="padding:0 0 6px"><div class="se-w"><div class="se-r se-hd"><div>단계</div><div>상태</div><div>마감일</div></div>`;S.forEach(st=>{const info=n.st[st.id];h+=`<div class="se-r"><div class="se-n"><span class="sdot ${info.s}"></span>${st.i} ${st.l}</div><div><select class="se-sel" onchange="uSS(${n.id},'${st.id}',this.value)"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select></div><div><input type="date" class="se-di" value="${info.d||''}" onchange="uSD(${n.id},'${st.id}',this.value)"></div></div>`;});h+=`</div></td></tr>`;}});
-  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">☁️ Google Sheets 동기화</div><div class="sp-row"><div><div class="sp-lbl">상태</div><div class="sp-desc">${SHEETS_ENABLED?'연결됨 — '+API_URL.slice(0,50)+'…':'❌ 미설정 — HTML에서 API_URL을 설정하세요'}</div></div>${SHEETS_ENABLED?`<button class="m-btn m-ok" style="padding:6px 14px;font-size:12px" onclick="manualSync()">수동 동기화</button>`:''}</div></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" checked><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl" style="color:var(--danger)">데이터 초기화</div><div class="sp-desc">모든 수정사항을 샘플 데이터로 리셋</div></div><button class="m-btn" style="background:var(--danger);color:#fff;padding:6px 14px;font-size:12px" onclick="resetData()">리셋</button></div></div>`;
+  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">☁️ Google Sheets 동기화</div><div class="sp-row"><div><div class="sp-lbl">상태</div><div class="sp-desc">${SHEETS_ENABLED?'연결됨 — '+API_URL.slice(0,50)+'…':'❌ 미설정 — HTML에서 API_URL을 설정하세요'}</div></div>${SHEETS_ENABLED?`<button class="m-btn m-ok" style="padding:6px 14px;font-size:12px" onclick="manualSync()">수동 동기화</button>`:''}</div></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" ${blinkOn?'checked':''} onchange="togBlink()"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox" ${hideDone?'checked':''} onchange="togHideDone()"><span class="tog-s"></span></label></div></div>`;
   document.getElementById('set-p').innerHTML=h;}
 
 // Detail
