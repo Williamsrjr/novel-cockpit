@@ -782,7 +782,7 @@ function startPolling(){
         console.warn('폴링 중 오류:', e);
       }
     }
-  },10000);  // 10초 주기
+  },60000);  // 10초 주기
   syncStatus='synced';updateSyncBadge();
 }
 
