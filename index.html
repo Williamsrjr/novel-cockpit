@@ -549,8 +549,38 @@ const TD=new Date();
 const si=id=>S.findIndex(x=>x.id===id);
 const gp=n=>Math.round(((si(n.cs)+.5)/S.length)*100);
 const dab=(a,b)=>Math.round((b-a)/864e5);
-function dli(n){const s=new Date(n.sd),e=new Date(n.ed),t=dab(s,e),el=dab(s,TD),r=dab(TD,e),p=Math.min(100,Math.max(0,Math.round((el/t)*100)));let st="ok";if(r<0)st="overdue";else if(p-gp(n)>20)st="warn";return{r,p,st};}
-function uc(d){if(!d)return'';const x=dab(TD,new Date(d));if(x<0)return'uc';if(x<=2)return'u3';if(x<=5)return'u2';if(x<=10)return'u1';return'';}
+function dli(n){
+    // 퇴고 완료 후 또는 complete/publishing 단계이면 overdue 판단 중단
+    if (n.cs === 'complete' || n.cs === 'publishing' || 
+        n.st && n.st.revision && n.st.revision.s === 'done') {
+        return {r: 0, p: 100, st: "ok"};
+    }
+
+    const s=new Date(n.sd),e=new Date(n.ed),t=dab(s,e),el=dab(s,TD),r=dab(TD,e),
+          p=Math.min(100,Math.max(0,Math.round((el/t)*100)));
+    let st="ok";
+    if(r<0)st="overdue";
+    else if(p-gp(n)>20)st="warn";
+    return{r,p,st};
+}
+function uc(d, novel = null){
+    if(!d) return '';
+
+    // 퇴고 완료 후 또는 complete/publishing 단계인 경우 overdue 무시
+    if (novel) {
+        if (novel.cs === 'complete' || novel.cs === 'publishing' || 
+            novel.st && novel.st.revision && novel.st.revision.s === 'done') {
+            return '';
+        }
+    }
+
+    const x = dab(TD, new Date(d));
+    if(x < 0) return 'uc';
+    if(x <= 2) return 'u3';
+    if(x <= 5) return 'u2';
+    if(x <= 10) return 'u1';
+    return '';
+}
 function recomp(n){for(let i=0;i<S.length;i++){if(n.st[S[i].id].s==='active'){n.cs=S[i].id;return;}}let l='ideation';for(let i=0;i<S.length;i++){if(n.st[S[i].id].s==='done')l=S[i].id;else break;}n.cs=l;}
 function gf(){let r=N;if(hideDone)r=r.filter(n=>n.cs!=='complete'&&n.cs!=='publishing'||Object.values(n.st).some(s=>s!=='done'));if(at.size===0)return r;return r.filter(n=>[...at].some(t=>n.tags.includes(t)));}
 function tt(t){if(at.has(t))at.delete(t);else at.add(t);rp();R();}
@@ -712,42 +742,74 @@ function R(){
 
   let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
   ns.forEach((n, idx)=>{
-    let rU='';
-    S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){if(uc(info.d)==='uc'||uc(info.d)==='u3')rU='row-over';}});
-    const dl=dli(n);
-    const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';
-    const hasDir=!!n.dir;
-    o+=`<tr class="${rU}" draggable="true" ondragstart="drag(event, ${n.id}, 'row')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'row')"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
-    S.forEach(st=>{
-      const info=n.st[st.id];
-      const sl=n.sl[st.id];
-      const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';
-      const isE=!sl?.u&&!info.n;
-      let cc='c ';
-      if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}
-      else if(info.s==='active')cc+=`a ${uc(info.d)}`;
-      else if(info.s==='blocked')cc+='b';
-      else cc+=`p${isE?' empty':''}`;
-      let lb='';
-      if(st.id==='complete'&&info.s==='done')lb='DONE';
-      else if(st.id==='publishing'){
-  const pc = (n.pubs||[]).filter(p => p.name && p.url).length;
-  if(info.s === 'done'){
-    lb = `완료(${pc}곳)`;
-  } else if(info.s === 'active'){
-    lb = `진행중(${pc}곳)`;
-  } else if(pc > 0){
-    lb = `${pc}곳`;
-  } else {
-    lb = '';
-  }
-}
-      else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCKED';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}
-      const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';
-      o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;
+    // 퇴고(revision) 단계가 완료되었거나, complete/publishing 단계인 경우 overdue 판단 중단
+    const isRevisionDoneOrLater = (n.cs === 'complete' || 
+                                   n.cs === 'publishing' || 
+                                   (n.st && n.st.revision && n.st.revision.s === 'done'));
+
+    let rU = '';
+    // overdue 행 강조 (row-over)는 퇴고 완료 후에는 적용하지 않음
+    if (!isRevisionDoneOrLater) {
+        S.forEach(st => {
+            const info = n.st[st.id];
+            if (info.s === 'active' && info.d) {
+                // uc 함수에 novel 객체 전달 (2번 수정과 연동)
+                if (uc(info.d, n) === 'uc' || uc(info.d, n) === 'u3') {
+                    rU = 'row-over';
+                }
+            }
+        });
+    }
+
+    const dl = dli(n);
+    let oB = '';
+    // OVERDUE 배지는 퇴고 완료 후에는 표시하지 않음
+    if (dl.st === 'overdue' && !isRevisionDoneOrLater) {
+        oB = '<span class="over-badge">OVERDUE</span>';
+    }
+
+    const hasDir = !!n.dir;
+    o += `<tr class="${rU}" draggable="true" ondragstart="drag(event, ${n.id}, 'row')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'row')"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
+
+    S.forEach(st => {
+        const info = n.st[st.id];
+        const sl = n.sl[st.id];
+        const tc = sl && sl.t === 'nc' ? 'nc' : sl && (sl.t === 'gdoc' || sl.t === 'gdrive') ? 'docs' : 'none';
+        const isE = !sl?.u && !info.n;
+        let cc = 'c ';
+        if (info.s === 'done') {
+            if (st.id === 'complete') cc += 'd complete-done';
+            else cc += `d ${tc}${sl && sl.u ? ' has-url' : ''}`;
+        }
+        else if (info.s === 'active') cc += `a ${uc(info.d, n)}`;   // uc에 novel 전달
+        else if (info.s === 'blocked') cc += 'b';
+        else cc += `p${isE ? ' empty' : ''}`;
+
+        let lb = '';
+        if (st.id === 'complete' && info.s === 'done') lb = 'DONE';
+        else if (st.id === 'publishing') {
+            const pc = (n.pubs || []).filter(p => p.name && p.url).length;
+            if (info.s === 'done') {
+                lb = `완료(${pc}곳)`;
+            } else if (info.s === 'active') {
+                lb = `진행중(${pc}곳)`;
+            } else if (pc > 0) {
+                lb = `${pc}곳`;
+            } else {
+                lb = '';
+            }
+        }
+        else {
+            if (info.s === 'active') lb = 'NOW';
+            else if (info.s === 'blocked') lb = 'BLOCKED';
+            else if (info.s === 'done' && sl && sl.t) lb = TL[sl.t] || '';
+        }
+
+        const dueTag = info.d ? `<span class="c-due">📅${info.d.slice(5)}</span>` : '';
+        o += `<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;
     });
-    o+=`</tr>`;
-  });
+    o += `</tr>`;
+});
   o+=`</tbody></table></div>`;
 
   let mo='<div class="mob-ov">';
