@@ -39,6 +39,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR','Sora',sans-serif;background:var(--bg0);color:var(--fg);min-height:100vh;-webkit-font-smoothing:antialiased;}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(100,180,255,.07) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 5%,rgba(0,238,255,.06),transparent 50%),radial-gradient(ellipse at 85% 90%,rgba(124,138,255,.04),transparent 50%);pointer-events:none;z-index:0;}
 .app{max-width:1140px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
 
 /* === HEADER === */
@@ -55,43 +56,63 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .nav-tabs{display:flex;background:var(--glass);backdrop-filter:blur(16px);border-radius:12px;padding:3px;border:1px solid var(--border);}
 .nav-t{padding:8px 18px;border:none;background:transparent;color:var(--fg3);cursor:pointer;border-radius:9px;font-size:13px;font-weight:600;transition:all .2s;}
 .nav-t.on{background:var(--bg4);color:var(--accent);}
+.pills{display:flex;gap:4px;flex-wrap:wrap;}
+.pill{padding:5px 12px;border:1px solid var(--border2);background:transparent;color:var(--fg3);cursor:pointer;border-radius:100px;font-size:11px;transition:all .15s;}
+.pill.on{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
 
 /* === TABLE === */
-.glass-panel{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--card-r);overflow:visible;}
-.ov-wrap{overflow-x:auto; overflow-y:auto; max-height:calc(100vh - 350px);}
+.glass-panel{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--card-r);overflow:visible;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.ov-wrap{overflow-x:auto; overflow-y:auto; max-height:calc(100vh - 400px);}
 .ov-t{width:100%;min-width:880px;border-collapse:collapse;}
 .ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;padding:10px 2px;text-align:center;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg1);z-index:10;}
+.ov-t thead th:first-child{text-align:left;padding-left:22px;color:var(--fg4);}
+.ov-t tbody tr{border-bottom:1px solid var(--border);transition:all .2s; cursor: grab;}
 .ov-t tbody tr:hover{background:rgba(0,238,255,.03);}
-.ov-t td{padding:8px 4px;text-align:center;border-bottom:1px solid var(--border);}
-.ov-nm{font-size:14px;font-weight:700;color:var(--fg);cursor:pointer;}
+.ov-t td{padding:8px 4px;text-align:center;}
+.ov-t td:first-child{text-align:left;padding-left:22px;}
+.ov-nm{font-size:14px;font-weight:700;color:var(--fg);cursor:pointer;text-decoration:none;}
+.ov-nm.has-link{border-bottom:1px dashed var(--docs);}
+.ov-sub{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}
+.ov-tag{font-size:9px;padding:2px 7px;border-radius:4px;background:var(--bg3);color:var(--fg3);}
 
 /* === CELLS === */
-.c{display:inline-flex;align-items:center;justify-content:center;width:80%;height:30px;border-radius:7px;cursor:pointer;position:relative;transition:all .2s;}
-.c.d{background:var(--done-bg);border:1px solid var(--done);}
-.c.a{background:var(--active-bg);border:1px solid var(--active);box-shadow:0 0 10px var(--active-bg);}
+.c{display:inline-flex;align-items:center;justify-content:center;width:84%;height:30px;border-radius:7px;cursor:pointer;position:relative;transition:all .2s;}
+.c:hover{transform:scale(1.1);}
+.c.d.docs{background:var(--docs-bg);border:1px solid var(--docs-bd);}
+.c.d.nc{background:var(--nc-bg);border:1px solid var(--nc-bd);}
+.c.d.none{background:var(--done-bg);border:1px solid rgba(16,185,129,.18);}
+.c.d.complete-done{background:rgba(34,211,238,.15);border:2px solid rgba(34,211,238,.4);}
+.c.a{background:var(--active-bg);border:1px solid var(--active-bd);box-shadow:0 0 14px rgba(245,158,11,.12);}
 .c.p{background:var(--bg3);opacity:.3;}
-.c.b{background:var(--blocked-bg);border:1px solid var(--blocked);}
-.cl{font-size:9px;font-weight:800;color:#fff;}
+.c.b{background:var(--blocked-bg);border:1px solid var(--blocked-bd);}
+.cl{font-size:9px;font-weight:800;color:#fff;text-transform:uppercase;}
+.c-due{position:absolute;top:-7px;right:-8px;font-size:7px;background:var(--bg4);color:var(--fg3);padding:1px 5px;border-radius:4px;}
 
-/* === MODAL & TOAST === */
+/* === MODAL & UI === */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;}
 .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:90%;max-width:420px;background:var(--bg1);border-radius:20px;padding:30px;box-shadow:0 28px 72px rgba(0,0,0,.5);border:1px solid var(--border2);}
-.modal input, .modal select, .modal textarea{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:#fff;font-family:inherit;}
+.modal h3{font-family:'Sora';font-size:18px;margin-bottom:15px;}
+.modal label{display:block;font-size:11px;color:var(--fg4);text-transform:uppercase;margin-top:15px;margin-bottom:5px;}
+.modal input, .modal select, .modal textarea{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:#fff;font-family:inherit;}
 .m-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
 .m-btn{padding:10px 20px;border-radius:10px;cursor:pointer;font-weight:600;border:none;transition:0.2s;}
 .m-ok{background:var(--accent);color:#000;}
 .m-danger{background:var(--danger);color:#fff;}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--bg2);color:#fff;padding:12px 24px;border-radius:12px;z-index:999;box-shadow:0 12px 40px rgba(0,0,0,.4);font-size:13px;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--bg2);color:#fff;padding:12px 24px;border-radius:12px;z-index:999;box-shadow:0 12px 40px rgba(0,0,0,.4);font-size:12px;}
 
 .hidden{display:none!important;}
-.sdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
-.sdot.done{background:var(--done);}
-.sdot.active{background:var(--active);}
-.sdot.pending{background:var(--fg4);}
-
-/* 깜박임 애니메이션 */
 @keyframes blink { 50% { opacity: 0.4; } }
 .u3 { animation: blink 0.8s infinite; }
+
+/* Context Menu */
+.ctx{position:fixed;z-index:300;background:var(--bg1);border:1px solid var(--border2);border-radius:14px;padding:6px;min-width:180px;box-shadow:0 20px 56px rgba(0,0,0,.5);}
+.ctx-item{padding:9px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--fg2);display:flex;align-items:center;gap:8px;}
+.ctx-item:hover{background:var(--bg3);color:var(--fg);}
+
+.m-tags-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.m-tag-cb{display:none;}
+.m-tag-label{padding:5px 12px;border-radius:100px;border:1px solid var(--border2);color:var(--fg3);font-size:12px;cursor:pointer;}
+.m-tag-cb:checked+.m-tag-label{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
 </style>
 </head>
 <body>
@@ -107,34 +128,39 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
       </div>
     </div>
     <div class="nav">
-      <div class="nav-tabs"><button class="nav-t on" onclick="sv('overview')">전체보기</button></div>
+      <div class="nav-tabs"><button class="nav-t on" data-v="overview" onclick="sv('overview')">전체보기</button></div>
+      <div id="pills" class="pills"></div>
     </div>
     <div id="ov-v"></div>
   </div>
 </div>
 
+<div id="ctx-menu" class="ctx hidden"></div>
 <div id="modal-bg" class="modal-bg hidden" onclick="closeModal()"></div>
 <div id="modal" class="modal hidden"></div>
 
 <script>
 const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:"🏗"},{id:"story",l:"BG",i:"🧬"},{id:"scene_structure",l:"씬구조",i:"🎬"},{id:"scene_beat",l:"씬비트",i:"🥁"},{id:"draft",l:"초고",i:"✍️"},{id:"revision",l:"퇴고",i:"🔄"},{id:"complete",l:"교정교열",i:"✅"},{id:"publishing",l:"발행",i:"📡"}];
+const TAGS=["SF","문학","엽편","단편","중편","장편","야설","에로","판타지"];
+const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
 let N=[];
-const API_URL = 'https://script.google.com/macros/s/AKfycbwvgIYcKLFj33pTGTS1mSICSiMowFRzwaLsSWQOEZVSwNzzUYRBoUyEdg7Ex1mGEc7W/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxQ4CNeYPz6Mf4iFOaiopQcXy1kfWpImBPSDqjztTD3XdAJFWWWSpXKmev9Th1Zmf53/exec';
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
-// [중요 수정] 날짜 타임존 버그 해결 로직
 function fmtD(v) {
   if (!v || v === 'NaN') return '';
   const d = new Date(v);
   if (isNaN(d.getTime())) return '';
-  // UTC 기준이 아닌 Local 기준으로 YYYY-MM-DD 추출
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function sheetsToN(data){
   return data.novels.map(row=>({
     id:row.id, title:row.title, tags: row.tags ? String(row.tags).split(',') : [],
-    cs:row.cs||'ideation', sd:fmtD(row.sd), ed:fmtD(row.ed), 
+    cs:row.cs||'ideation', sd:fmtD(row.sd), ed:fmtD(row.ed), len:row.len||'', dir:row.dir||'',
     links:{gdoc:row.gdoc||'',gdrive:row.gdrive||'',nc:row.nc||''},
     sl:{}, st:{}
   })).map(n => {
@@ -149,12 +175,12 @@ function sheetsToN(data){
 
 function nToSheets(novels){
   return {
-    novels: novels.map(n=>({ id:n.id, title:n.title, tags:n.tags.join(','), cs:n.cs, sd:n.sd, ed:n.ed })),
-    stages: novels.flatMap(n=> S.map(s=> ({ novelId:n.id, stageId:s.id, status:n.st[s.id].s, due:n.st[s.id].d, note:n.st[s.id].n, url:n.sl[s.id].u })))
+    novels: novels.map(n=>({ id:n.id, title:n.title, tags:n.tags.join(','), cs:n.cs, sd:n.sd, ed:n.ed, len:n.len, dir:n.dir })),
+    stages: novels.flatMap(n=> S.map(s=> ({ novelId:n.id, stageId:s.id, status:n.st[s.id].s, due:n.st[s.id].d, note:n.st[s.id].n, url:n.sl[s.id].u, tool:n.sl[s.id].t })))
   };
 }
 
-let isSaving=false, saveTimer=null;
+let isSaving=false, saveTimer=null, at=new Set();
 
 async function loadFromSheets(force){
   if(!SHEETS_ENABLED || isSaving) return;
@@ -180,75 +206,115 @@ async function saveToSheets(){
 function persist(){ R(); clearTimeout(saveTimer); saveTimer=setTimeout(saveToSheets, 1500); }
 
 function R(){
+  const ns = at.size === 0 ? N : N.filter(n => [...at].some(t => n.tags.includes(t)));
   document.getElementById('stats').textContent = `${N.length} Projects Active`;
   let o = `<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품명</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
-  N.forEach((n,idx)=>{
-    o += `<tr><td style="text-align:left; padding-left:20px"><span class="ov-nm" onclick="titleDbl(${n.id})">${idx+1}. ${n.title}</span></td>`;
+  ns.forEach((n,idx)=>{
+    o += `<tr draggable="true" ondragstart="drag(event,${n.id})" ondragover="allowDrop(event)" ondrop="drop(event,${n.id})">
+    <td><span class="ov-nm ${n.dir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>
+    <div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
     S.forEach(st=>{
-      const info=n.st[st.id]; let cc='c ';
-      if(info.s==='done') cc+='d'; else if(info.s==='active') cc+='a '+(info.d?'u3':''); else if(info.s==='blocked') cc+='b'; else cc+='p';
-      o += `<td><div class="${cc}" onclick="cellDbl(${n.id},'${st.id}')"><span class="cl">${info.s==='active'?'NOW':(info.s==='done'?'✓':'')}</span></div></td>`;
+      const info=n.st[st.id]; const sl=n.sl[st.id]; let cc='c ';
+      const tc = sl.t==='nc'?'nc':(sl.t==='gdoc'?'docs':'none');
+      if(info.s==='done') cc+='d ' + (st.id==='complete'?'complete-done':tc);
+      else if(info.s==='active') cc+='a '+(info.d?uc(info.d):'');
+      else if(info.s==='blocked') cc+='b'; else cc+='p';
+      o += `<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">
+      <span class="cl">${info.s==='active'?'NOW':(info.s==='done'?(TL[sl.t]||'✓'):'')}</span>
+      ${info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:''}</div></td>`;
     });
     o += `</tr>`;
   });
   document.getElementById('ov-v').innerHTML = o + `</tbody></table></div>`;
+  rp();
 }
 
+function uc(d){
+  const days = Math.round((new Date(d) - new Date()) / 864e5);
+  return days < 0 ? 'uc' : (days <= 2 ? 'u3' : (days <= 5 ? 'u2' : ''));
+}
+
+function handleTitle(e, nid){ e.stopPropagation(); const n=N.find(x=>x.id===nid); if(n.dir) window.open(n.dir,'_blank'); else titleDbl(nid); }
+
 function addNovel(){
-  const title = prompt("새 작품 제목:");
-  if(!title) return;
-  const newId = Date.now();
-  const st={}; S.forEach(s=> st[s.id]={s:'pending',d:''}); st.ideation.s='active';
-  N.push({ id:newId, title, tags:[], cs:'ideation', sd:fmtD(new Date()), ed:'', st, sl:{} });
-  persist();
+  const today=new Date().toISOString().slice(0,10);
+  showModal(`<h3>➕ 새 작품 추가</h3>
+    <label>제목</label><input type="text" id="m-title"/>
+    <label>태그</label><div class="m-tags-grid">${TAGS.map(t=>`<input type="checkbox" class="m-tag-cb" id="mt-${t}" value="${t}"><label class="m-tag-label" for="mt-${t}">${t}</label>`).join('')}</div>
+    <label>시작일</label><input type="date" id="m-sd" value="${today}"/>
+    <div class="m-btns"><button class="m-btn m-ok" onclick="saveNewNovel()">추가</button></div>`);
+}
+
+function saveNewNovel(){
+  const title=document.getElementById('m-title').value; if(!title) return;
+  const tags=TAGS.filter(t=>document.getElementById('mt-'+t).checked);
+  const newId=Date.now();
+  const st={}; S.forEach(s=>st[s.id]={s:'pending',d:'',n:''}); st.ideation.s='active';
+  const sl={}; S.forEach(s=>sl[s.id]={u:'',t:''});
+  N.push({id:newId, title, tags, cs:'ideation', sd:document.getElementById('m-sd').value, ed:'', len:'', dir:'', st, sl});
+  closeModal(); persist();
 }
 
 function titleDbl(nid){
   const n=N.find(x=>x.id===nid);
-  showModal(`<h3>작품 정보 수정</h3>
+  showModal(`<h3>✏️ 작품 수정</h3>
     <label>제목</label><input type="text" id="m-title" value="${n.title}"/>
-    <label>시작일</label><input type="date" id="m-sd" value="${n.sd}"/>
-    <label>목표일</label><input type="date" id="m-ed" value="${n.ed}"/>
+    <label>태그</label><div class="m-tags-grid">${TAGS.map(t=>`<input type="checkbox" class="m-tag-cb" id="mt-${t}" value="${t}" ${n.tags.includes(t)?'checked':''}><label class="m-tag-label" for="mt-${t}">${t}</label>`).join('')}</div>
+    <label>Drive 폴더</label><input type="url" id="m-dir" value="${n.dir||''}"/>
+    <label>분량</label><input type="text" id="m-len" value="${n.len}"/>
     <div class="m-btns"><button class="m-btn m-danger" onclick="deleteNovel(${nid})">삭제</button><button class="m-btn m-ok" onclick="saveTitle(${nid})">저장</button></div>`);
 }
 
 function saveTitle(nid){
   const n=N.find(x=>x.id===nid);
   n.title=document.getElementById('m-title').value;
-  n.sd=document.getElementById('m-sd').value;
-  n.ed=document.getElementById('m-ed').value;
+  n.tags=TAGS.filter(t=>document.getElementById('mt-'+t).checked);
+  n.dir=document.getElementById('m-dir').value;
+  n.len=document.getElementById('m-len').value;
   closeModal(); persist();
 }
 
-function deleteNovel(nid){ if(confirm('정말 삭제할까요?')){ N=N.filter(x=>x.id!==nid); closeModal(); persist(); } }
-
 function cellDbl(nid,sid){
-  const n=N.find(x=>x.id===nid); const info=n.st[sid];
-  showModal(`<h3>${S.find(s=>s.id===sid).l} 상태 변경</h3>
-    <select id="m-status">
-      <option value="pending" ${info.s==='pending'?'selected':''}>대기</option>
-      <option value="active" ${info.s==='active'?'selected':''}>진행중</option>
-      <option value="done" ${info.s==='done'?'selected':''}>완료</option>
-      <option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option>
-    </select>
+  const n=N.find(x=>x.id===nid); const info=n.st[sid]; const sl=n.sl[sid];
+  showModal(`<h3>${S.find(s=>s.id===sid).l} 설정</h3>
+    <label>문서 URL</label><input type="url" id="m-url" value="${sl.u||''}"/>
+    <label>도구</label><select id="m-tool"><option value="gdoc" ${sl.t==='gdoc'?'selected':''}>Docs</option><option value="nc" ${sl.t==='nc'?'selected':''}>NC</option></select>
+    <label>상태</label><select id="m-status"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행</option><option value="done" ${info.s==='done'?'selected':''}>완료</option></select>
     <label>마감일</label><input type="date" id="m-due" value="${info.d||''}"/>
-    <label>메모</label><textarea id="m-note" rows="3">${info.n||''}</textarea>
     <div class="m-btns"><button class="m-btn m-ok" onclick="saveCell(${nid},'${sid}')">확인</button></div>`);
 }
 
 function saveCell(nid,sid){
   const n=N.find(x=>x.id===nid);
+  n.sl[sid].u=document.getElementById('m-url').value;
+  n.sl[sid].t=document.getElementById('m-tool').value;
   n.st[sid].s=document.getElementById('m-status').value;
   n.st[sid].d=document.getElementById('m-due').value;
-  n.st[sid].n=document.getElementById('m-note').value;
   closeModal(); persist();
 }
 
+function handleCell(e,nid,sid){ e.stopPropagation(); const n=N.find(x=>x.id===nid); const sl=n.sl[sid]; if(sl.u) window.open(sl.u,'_blank'); else cellDbl(nid,sid); }
+function showCtx(e,nid,sid){ e.preventDefault(); e.stopPropagation(); const ctx=document.getElementById('ctx-menu'); ctx.innerHTML=`<div class="ctx-item" onclick="cellDbl(${nid},'${sid}')">⚙️ 상세 설정</div>`; ctx.classList.remove('hidden'); ctx.style.left=e.clientX+'px'; ctx.style.top=e.clientY+'px'; }
+document.addEventListener('click', ()=>document.getElementById('ctx-menu').classList.add('hidden'));
+
+function rp(){ document.getElementById('pills').innerHTML=TAGS.map(t=>`<button class="pill ${at.has(t)?'on':''}" onclick="tt('${t}')">${t}</button>`).join(''); }
+function tt(t){ if(at.has(t)) at.delete(t); else at.add(t); R(); }
+function sv(v){ R(); }
+function togTheme(){ document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'); }
 function showModal(h){ document.getElementById('modal-bg').classList.remove('hidden'); const m=document.getElementById('modal'); m.classList.remove('hidden'); m.innerHTML=h; }
 function closeModal(){ document.getElementById('modal').classList.add('hidden'); document.getElementById('modal-bg').classList.add('hidden'); }
-function togTheme(){ document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'); }
+function openSet(){ alert("수동 동기화는 상단 버튼을 이용해주세요."); }
+function deleteNovel(nid){ if(confirm('정말 삭제할까요?')){ N=N.filter(x=>x.id!==nid); closeModal(); persist(); } }
 
-function toast(m){ const t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2000); }
+let draggedId=null;
+function drag(e,id){draggedId=id; e.target.style.opacity=0.5;}
+function allowDrop(e){e.preventDefault();}
+function drop(e,tid){
+  e.preventDefault(); if(draggedId===tid) return;
+  const idx1=N.findIndex(x=>x.id===draggedId), idx2=N.findIndex(x=>x.id===tid);
+  const [removed]=N.splice(idx1,1); N.splice(idx2,0,removed);
+  persist();
+}
 
 loadFromSheets(true);
 setInterval(()=> { if(!isSaving && !document.hidden) loadFromSheets(); }, 60000);
