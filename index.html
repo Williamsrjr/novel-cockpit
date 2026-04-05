@@ -373,14 +373,13 @@ body.no-blink .u1,body.no-blink .u2,body.no-blink .u3,body.no-blink .uc{animatio
 <div class="app" id="app">
   <div id="main-view">
     <div class="hdr">
-      <div class="brand"><div class="brand-mark">N</div><div><h1>글쓰기 대시보드</h1><div class="brand-sub" id="stats"></div></div></div>
-      <div class="hdr-r">
-        <span id="sync-badge" style="font-family:Sora;font-size:10px;color:var(--fg4);margin-right:4px"></span>
-        <button class="add-btn" onclick="addNovel()" title="새 작품 추가">+</button>
-        <button class="icon-btn" id="thbtn" onclick="togTheme()" title="테마">🌙</button>
-        <button class="icon-btn" onclick="openSet()" title="관리">⚙️</button>
-      </div>
-    </div>
+     Script
+  <div class="brand-mark" onclick="showLogoModal()" style="cursor:pointer;" title="로고 클릭">N</div>
+  <div>
+    <h1>글쓰기 대시보드</h1>
+    <div class="brand-sub" id="stats"></div>
+  </div>
+</div>
     <p class="page-sub"></p>
     <div class="nav">
       <div class="nav-tabs"><button class="nav-t on" data-v="overview" onclick="sv('overview')">전체보기</button><button class="nav-t" data-v="works" onclick="sv('works')">작품별</button></div>
@@ -399,6 +398,24 @@ body.no-blink .u1,body.no-blink .u2,body.no-blink .u3,body.no-blink .uc{animatio
 <div id="modal" class="modal hidden"></div>
 
 <script>
+  // ===== 로고 클릭 시 이미지 모달 =====
+function showLogoModal() {
+  const imageUrl = "https://drive.google.com/file/d/1hgf7oV3XCjmOJwYhyPg9clxaCNZPmx2k/view?usp=sharing";   // ← 여기에 원하는 이미지 URL 넣으세요
+
+  const modalHtml = `
+    <div style="text-align:center;">
+      <h3 style="margin-bottom:16px;">Novel Cockpit</h3>
+      <img src="${imageUrl}" 
+           style="max-width:100%; max-height:70vh; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5);" 
+           alt="Novel Cockpit 로고">
+      <div style="margin-top:20px;">
+        <button class="m-btn m-cancel" onclick="closeModal()">닫기</button>
+      </div>
+    </div>
+  `;
+
+  showModal(modalHtml);
+}
 const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:"🏗"},{id:"story",l:"BG",i:"🧬"},{id:"scene_structure",l:"씬구조",i:"🎬"},{id:"scene_beat",l:"씬비트",i:"🥁"},{id:"draft",l:"초고",i:"✍️"},{id:"revision",l:"퇴고",i:"🔄"},{id:"complete",l:"교정교열",i:"✅"},{id:"publishing",l:"발행",i:"📡"}];
 const TAGS=["SF","문학","에세이","BL","야설","에로","판타지","엽편","단편","중편","장편"];
 const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
