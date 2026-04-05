@@ -76,7 +76,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .glass-panel{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--card-r);overflow:visible;box-shadow:0 8px 32px rgba(0,0,0,.2);}
 
 /* === OVERVIEW TABLE === */
-.ov-wrap{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 400px);-webkit-overflow-scrolling:touch;}
+.ov-wrap{
+  overflow-x:auto;
+  overflow-y:visible;   /* 내부 스크롤 제거 */
+  max-height:none;      /* 고정 높이 제한 해제 */
+  -webkit-overflow-scrolling:touch;
+}
 .ov-t{width:100%;min-width:880px;border-collapse:collapse;}
 .ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:600;letter-spacing:-.01em;padding:10px 2px 8px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);position:sticky;top:0;z-index:10;}
 .ov-t thead th:first-child{text-align:left;padding-left:22px;min-width:170px;width:170px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);}
