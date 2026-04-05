@@ -405,30 +405,31 @@ const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
 let N=[];
 const API_URL = 'https://script.google.com/macros/s/AKfycbwvgIYcKLFj33pTGTS1mSICSiMowFRzwaLsSWQOEZVSwNzzUYRBoUyEdg7Ex1mGEc7W/exec';
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
-
 function fmtD(v){
-  if(!v || v==='NaN' || v==='undefined' || v==='null') return '';
-  
-  const s = String(v).trim();
-  if(!s) return '';
+  if (!v || v === 'NaN' || v === 'undefined' || v === 'null') return '';
 
-  // 이미 YYYY-MM-DD 형식이면 그대로 반환 (가장 안전)
+  let s = String(v).trim();
+  if (!s) return '';
+
+  // 이미 YYYY-MM-DD 형식이면 그대로 반환
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
     return s.slice(0, 10);
   }
 
-  // Google Sheets에서 넘어온 날짜를 안전하게 처리
+  // Google Sheets 날짜를 안전하게 파싱
   let d = new Date(s);
-  if(isNaN(d.getTime())) return '';
+  if (isNaN(d.getTime())) return '';
 
-  // Timezone offset을 강제로 보정하여 KST 기준 날짜 고정
-  d = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  // 강력한 timezone 보정 (KST 기준으로 날짜 고정)
+  const offset = d.getTimezoneOffset() * 60000;
+  d = new Date(d.getTime() - offset + 9 * 60 * 60 * 1000); // UTC → KST 보정
 
   const year  = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day   = String(d.getDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
+}
 }
 function clV(v){return(!v||v==='NaN'||v==='undefined'||v==='null')?'':String(v);}
 function sheetsToN(data){
