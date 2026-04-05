@@ -812,27 +812,53 @@ function R(){
 });
   o+=`</tbody></table></div>`;
 
-   let mo='<div class="mob-ov">';
+    let mo='<div class="mob-ov">';
   ns.forEach((n, idx)=>{
-    const dl=dli(n);
-    const cs=S.find(x=>x.id===n.cs)||S;
-    const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;
+    const dl = dli(n);
+    const cs = S.find(x=>x.id===n.cs)||S;
     
-    // 퇴고 완료 후 overdue 클래스 적용 방지
-    const aD = n.st[n.cs]?.d || '';
-    const isRevisionDoneOrLater = (n.cs === 'complete' || 
-                                   n.cs === 'publishing' || 
+    // 퇴고 완료 후에는 남은 기간을 "완료"로 표시하고, overdue 스타일도 제거
+    const isRevisionDoneOrLater = (n.cs === 'complete' ||
+                                   n.cs === 'publishing' ||
                                    (n.st && n.st.revision && n.st.revision.s === 'done'));
-    const uCls = isRevisionDoneOrLater ? '' : uc(aD, n);
     
+    let dlTxt = '';
+    let periodClass = dl.st;
+    if (isRevisionDoneOrLater) {
+        dlTxt = '완료';
+        periodClass = 'ok';
+    } else {
+        dlTxt = dl.r < 0 ? `${Math.abs(dl.r)}일 초과` : `${dl.r}일 남음`;
+    }
+    
+    // overdue 클래스 적용 방지
+    const aD = n.st[n.cs]?.d || '';
+    const uCls = isRevisionDoneOrLater ? '' : uc(aD, n);
+   
     let btns='';
     if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;
     if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;
     if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;
-    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{
+    
+    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})">
+        <div class="mob-top">
+            <span class="mob-title ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>
+            <span class="mob-badge">${cs.i} ${cs.l}</span>
+        </div>
+        <div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div>
+        <div class="mob-bar-wrap">
+            <div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div>
+            <div class="mob-bar">${S.map(st=>{
       const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+=`p${!sl?.u&&!info.n?' empty':''}`;const lb=st.id==='complete'&&info.s==='done'?'DONE':info.s==='active'?'NOW':info.s==='blocked'?'BLOCKED':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';
       return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;
-    }).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div></div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;
+    }).join('')}</div></div>
+        <div class="mob-info">
+            <div><span class="k">남은 기간</span><div class="v ${periodClass}">${dlTxt}</div></div>
+            <div><span class="k">진행</span><div class="v">${gp(n)}%</div></div>
+            <div><span class="k">분량</span><div class="v">${n.len}</div></div>
+        </div>
+        <div class="mob-btns" onclick="event.stopPropagation()">${btns}</div>
+    </div>`;
   });
   mo+='</div>';
   document.getElementById('ov-v').innerHTML=o+mo;
