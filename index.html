@@ -445,10 +445,7 @@ function fmtD(v){
   let d = new Date(s);
   if (isNaN(d.getTime())) return '';
 
-  // 강력한 timezone 보정 (KST 기준으로 날짜 고정)
-  const offset = d.getTimezoneOffset() * 60000;
-  d = new Date(d.getTime() - offset + 9 * 60 * 60 * 1000); // UTC → KST 보정
-
+  // 브라우저가 이미 로컬 타임존(KST)이므로 추가 보정 없이 로컬 날짜 사용
   const year  = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day   = String(d.getDate()).padStart(2, '0');
