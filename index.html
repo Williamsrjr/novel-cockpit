@@ -403,7 +403,7 @@ const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:
 const TAGS=["SF","문학","엽편","단편","중편","장편","야설","에로","판타지"];
 const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
 let N=[];
-const API_URL = 'https://script.google.com/macros/s/AKfycbxQ4CNeYPz6Mf4iFOaiopQcXy1kfWpImBPSDqjztTD3XdAJFWWWSpXKmev9Th1Zmf53/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwvgIYcKLFj33pTGTS1mSICSiMowFRzwaLsSWQOEZVSwNzzUYRBoUyEdg7Ex1mGEc7W/exec';
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
 function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso;const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);}
