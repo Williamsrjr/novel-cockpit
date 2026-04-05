@@ -812,13 +812,19 @@ function R(){
 });
   o+=`</tbody></table></div>`;
 
-  let mo='<div class="mob-ov">';
+   let mo='<div class="mob-ov">';
   ns.forEach((n, idx)=>{
     const dl=dli(n);
     const cs=S.find(x=>x.id===n.cs)||S;
     const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;
-    const aD=n.st[n.cs]?.d||'';
-    const uCls=uc(aD);
+    
+    // 퇴고 완료 후 overdue 클래스 적용 방지
+    const aD = n.st[n.cs]?.d || '';
+    const isRevisionDoneOrLater = (n.cs === 'complete' || 
+                                   n.cs === 'publishing' || 
+                                   (n.st && n.st.revision && n.st.revision.s === 'done'));
+    const uCls = isRevisionDoneOrLater ? '' : uc(aD, n);
+    
     let btns='';
     if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;
     if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;
@@ -831,11 +837,19 @@ function R(){
   mo+='</div>';
   document.getElementById('ov-v').innerHTML=o+mo;
 
-  let w=`<div class="sec-title">진행 상세 분석</div><div class="cards-grid">`;
+    let w=`<div class="sec-title">진행 상세 분석</div><div class="cards-grid">`;
   ns.forEach((n, idx)=>{
-    const prog=gp(n);const cs=S.find(x=>x.id===n.cs)||S;const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const dl=dli(n);const note=n.st[n.cs]?.n||'';const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';const aD=n.st[n.cs]?.d||'';
+    const prog=gp(n);const cs=S.find(x=>x.id===n.cs)||S;const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const dl=dli(n);const note=n.st[n.cs]?.n||'';const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';
+    
+    // 퇴고 완료 후 overdue 클래스 적용 방지
+    const aD = n.st[n.cs]?.d || '';
+    const isRevisionDoneOrLater = (n.cs === 'complete' || 
+                                   n.cs === 'publishing' || 
+                                   (n.st && n.st.revision && n.st.revision.s === 'done'));
+    const overdueClass = isRevisionDoneOrLater ? '' : uc(aD, n);
+    
     let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="wk-btn docs" onclick="event.stopPropagation()">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">NC</a>`;
-    w+=`<div class="wk ${tC} ${uc(aD)}" draggable="true" ondragstart="drag(event, ${n.id}, 'card')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'card')" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>진척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dl.r}일</span></div>${aD?`<div class="wk-gi"><span class="wk-gl">마감</span><span class="wk-gv">${aD}</span></div>`:''}</div><div class="wk-btns">${btns}</div></div>`;
+    w+=`<div class="wk ${tC} ${overdueClass}" draggable="true" ondragstart="drag(event, ${n.id}, 'card')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'card')" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>진척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dl.r}일</span></div>${aD?`<div class="wk-gi"><span class="wk-gl">마감</span><span class="wk-gv">${aD}</span></div>`:''}</div><div class="wk-btns">${btns}</div></div>`;
   });
   w+='</div>';
   document.getElementById('wk-v').innerHTML=w;
