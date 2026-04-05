@@ -925,18 +925,10 @@ function R(){
   mo+='</div>';
   document.getElementById('ov-v').innerHTML=o+mo;
 
-          let w = `<div class="sec-title">진행 상세 분석</div>`;
+        let w = `<div class="sec-title">진행 상세 분석</div>`;
     
-    // 모바일 감지를 더 정확하게 처리
-    const isMobile = (window.innerWidth <= 768) || 
-                     (document.documentElement.clientWidth <= 768);
-    
-    // 컨테이너 결정
-    if (isMobile) {
-        w += `<div class="mob-works">`;
-    } else {
-        w += `<div class="cards-grid">`;
-    }
+    // 카드 HTML을 한 번만 생성
+    let cardsHtml = '';
     
     ns.forEach((n, idx) => {
         const prog = gp(n);
@@ -961,7 +953,7 @@ function R(){
         if (n.links.gdrive) btns += `<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">Drive</a>`;
         if (n.links.nc) btns += `<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">NC</a>`;
         
-        w += `<div class="wk ${tC} ${overdueClass}" draggable="true" ondragstart="drag(event, ${n.id}, 'card')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'card')" onclick="showDet(${n.id})">
+        cardsHtml += `<div class="wk ${tC} ${overdueClass}" draggable="true" ondragstart="drag(event, ${n.id}, 'card')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'card')" onclick="showDet(${n.id})">
             <div class="wk-top">
                 <div class="wk-t ${!!n.dir ? 'has-link' : ''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div>
                 <div class="wk-bdg">${cs.i} ${cs.l}</div>
@@ -988,10 +980,11 @@ function R(){
         </div>`;
     });
     
-    w += `</div>`;  // .mob-works 또는 .cards-grid 닫기 태그
+    // 데스크톱 + 모바일 둘 다 생성, CSS가 토글
+    w += `<div class="cards-grid">${cardsHtml}</div>`;
+    w += `<div class="mob-works">${cardsHtml}</div>`;
     
     document.getElementById('wk-v').innerHTML = w;
-}
 
 rp();
 loadFromSheets(true);
