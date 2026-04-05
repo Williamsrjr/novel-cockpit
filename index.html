@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Novel Cockpit</title>
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -116,7 +115,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .c.p.empty .cl{color:transparent;}
 /* Tooltip */
 .c-tip{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--bg1);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;font-size:11px;color:var(--fg);z-index:20;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.5);min-width:150px;max-width:230px;white-space:normal;line-height:1.5;backdrop-filter:blur(16px);}
-.c-tip::after{content:'absolute';top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border2);}
+.c-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border2);}
 .c:hover .c-tip{display:block;}
 .tip-stage{font-family:'Sora';font-weight:700;font-size:12px;margin-bottom:4px;}
 .tip-memo{color:var(--fg2);font-size:11px;margin-bottom:6px;border-left:2px solid var(--active);padding-left:8px;}
@@ -144,18 +143,9 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .over-badge{font-family:'Sora';font-size:8px;color:var(--danger);font-weight:800;margin-left:6px;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;background:var(--danger-bg);border-radius:4px;}
 
 /* Drag and Drop */
-.draggable-item {
-  cursor: grab;
-}
-.draggable-item:active {
-  cursor: grabbing;
-}
-.drag-over {
-  background-color: var(--accent-bg) !important;
-  outline: 2px dashed var(--accent) !important;
-  outline-offset: -2px;
-  opacity: 0.8;
-}
+.draggable-item { cursor: grab; }
+.draggable-item:active { cursor: grabbing; }
+.drag-over { background-color: var(--accent-bg) !important; outline: 2px dashed var(--accent) !important; outline-offset: -2px; opacity: 0.8; }
 
 /* === MOBILE OVERVIEW === */
 .mob-ov{display:none;}
@@ -395,7 +385,7 @@ body.no-blink .u1,body.no-blink .u2,body.no-blink .u3,body.no-blink .uc{animatio
 <div class="app" id="app">
   <div id="main-view">
     <div class="hdr">
-      <div class="brand"><div class="brand-mark">N</div><div><h1>Novel Cockpit 글쓰기 대시보드</h1><div class="brand-sub" id="stats"></div></div></div>
+      <div class="brand"><div class="brand-mark">N</div><div><h1>Novel Cockpit</h1><div class="brand-sub" id="stats"></div></div></div>
       <div class="hdr-r">
         <span id="sync-badge" style="font-family:Sora;font-size:10px;color:var(--fg4);margin-right:4px"></span>
         <button class="add-btn" onclick="addNovel()" title="새 작품 추가">+</button>
@@ -426,21 +416,16 @@ const TAGS=["SF","문학","엽편","단편","중편","장편","야설","에로",
 const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
 let N=[
   {id:1,title:"5억년 버튼",tags:["SF","단편"],cs:"revision",len:"40매",sd:"2026-01-15",ed:"2026-04-15",dir:"https://drive.google.com/drive/folders/ex1",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"주관적 시간 체험",d:""},structure:{s:"done",n:"3막 확정",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"6씬",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"16,200자",d:""},revision:{s:"active",n:"2차 퇴고중",d:"2026-04-10"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"구조노트",d:"3막 & 씬",u:"#"},{i:"📂",n:"참고 논문",d:"시간지각",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-28"},
-  {id:2,title:"모르는척",tags:["문학","단편"],cs:"revision",len:"30매",sd:"2026-02-01",ed:"2026-04-30",dir:"https://drive.google.com/drive/folders/ex2",links:{gdoc:"#",gdrive:"#",nc:""},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"gdoc"},scene_beat:{u:"#",t:"gdoc"},draft:{u:"#",t:"gdoc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"장례식장",d:""},structure:{s:"done",n:"K/M/O 비교",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"Version K",d:""},revision:{s:"active",n:"문체 정제",d:"2026-04-20"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"K/M/O 비교",d:"산문 비교",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-25"},
-  {id:3,title:"찔러보기",tags:["문학","중편","에로"],cs:"scene_structure",len:"60매",sd:"2026-01-20",ed:"2026-06-30",dir:"",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"Poke → 성적 코드화",d:""},structure:{s:"done",n:"4장 12씬",d:""},story:{s:"done",n:"DB 유출",d:""},scene_structure:{s:"active",n:"16K~18K자",d:"2026-04-05"},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"4장 구조도",d:"12씬 배치",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-20"},
-  {id:4,title:"역전의 남자들",tags:["문학","장편"],cs:"structure",len:"장편",sd:"2026-03-01",ed:"2027-03-01",dir:"",links:{gdoc:"",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdrive"},structure:{u:"#",t:"nc"},story:{u:"",t:""},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"모티프 맵",d:""},structure:{s:"active",n:"스타일 가이드",d:"2026-05-01"},story:{s:"pending",n:"",d:""},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"무진기행",d:"김승옥",u:"#"},{i:"📄",n:"무라카미",d:"A Slow Boat",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-15"},
-  {id:5,title:"백지와 거울",tags:["SF","장편"],cs:"story",len:"49씬",sd:"2025-11-01",ed:"2027-06-01",dir:"#",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"진화적 취약성",d:""},structure:{s:"done",n:"4막 16장",d:""},story:{s:"active",n:"쌍둥이 시술",d:"2026-06-01"},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"49씬 구조",d:"NC 포맷",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-10"},
-  {id:6,title:"반찬가게",tags:["SF","문학","단편"],cs:"draft",len:"40매",sd:"2026-02-10",ed:"2026-05-15",dir:"#",links:{gdoc:"#",gdrive:"",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"세로토닌 BBB",d:""},structure:{s:"done",n:"에세이→르포",d:""},story:{s:"done",n:"은폐/착취",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"active",n:"초고 집필중",d:"2026-04-03"},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"W-Method",d:"평화→Hard SF",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-22"},
+  {id:2,title:"모르는척",tags:["문학","단편"],cs:"revision",len:"30매",sd:"2026-02-01",ed:"2026-04-30",dir:"https://drive.google.com/drive/folders/ex2",links:{gdoc:"#",gdrive:"#",nc:""},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"gdoc"},scene_beat:{u:"#",t:"gdoc"},draft:{u:"#",t:"gdoc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"장례식장",d:""},structure:{s:"done",n:"K/M/O 비교",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"Version K",d:""},revision:{s:"active",n:"문체 정제",d:"2026-04-20"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"K/M/O 비교",d:"산문 비교",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-25"}
 ];
 // ===== Google Sheets Integration =====
-const API_URL = 'https://script.google.com/macros/s/AKfycby9I4tInLhIBOTDQyih8KrU8rFP2aF9eGKPCa9j5l4jtiPynth5DmSZAhBxPGoPIuiA/exec';
-const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
+const API_URL = '여기에_새로_발급받은_웹앱_URL을_붙여넣으세요';
+const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL' && !API_URL.includes('여기에_새로_발급받은_웹앱_URL을_붙여넣으세요');
 
 const DEFAULT_N=JSON.parse(JSON.stringify(N));
-N=[]; // ✅ 시트 데이터 로드 전까지 빈 배열 (하드코딩 데이터 표시 방지)
+N=[]; 
 
-// Convert Sheets flat data → N[] format
-function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso;const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);} // ✅ 다양한 날짜 포맷 안전 처리
+function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso;const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);}
 function clV(v){return(!v||v==='NaN'||v==='undefined'||v==='null')?'':String(v);}
 function sheetsToN(data){
   const novels=data.novels.map(row=>({
@@ -449,7 +434,6 @@ function sheetsToN(data){
     links:{gdoc:clV(row.gdoc),gdrive:clV(row.gdrive),nc:clV(row.nc)},
     sl:{}, st:{}, refs:[], pubs:[], up:fmtD(row.up)
   }));
-  // Fill stages
   novels.forEach(n=>{
     S.forEach(s=>{n.sl[s.id]={u:'',t:''};n.st[s.id]={s:'pending',n:'',d:''};});
     data.stages.filter(s=>s.novelId===n.id).forEach(s=>{
@@ -463,7 +447,6 @@ function sheetsToN(data){
   return novels;
 }
 
-// Convert N[] → Sheets flat format
 function nToSheets(novels){
   const novelsFlat=novels.map(n=>({
     id:n.id,title:n.title,tags:n.tags,cs:n.cs,len:n.len,sd:n.sd,ed:n.ed,dir:n.dir,
@@ -484,7 +467,6 @@ function nToSheets(novels){
   return{novels:novelsFlat,stages,refs,pubs};
 }
 
-// Fetch from Sheets (async, updates after page load)
 let syncStatus='local';
 function updateSyncBadge(){
   const el=document.getElementById('sync-badge');
@@ -498,7 +480,7 @@ let isSaving=false;
 let hasLocalData=false;
 
 async function loadFromSheets(force){
-  if(!SHEETS_ENABLED||isSaving||pendingSave)return; // ✅ pendingSave 중에는 폴링 차단
+  if(!SHEETS_ENABLED||isSaving||pendingSave)return; 
   if(hasLocalData&&!force)return;
   syncStatus='syncing';updateSyncBadge();
   try{
@@ -506,21 +488,17 @@ async function loadFromSheets(force){
     const data=await res.json();
     if(data.error){syncStatus='error';updateSyncBadge();return;}
     if(data.novels&&data.novels.length>0){
-      // 로컬 pubs 데이터 백업 (pendingSave 중에만 merge)
       const localPubs={};
       if(pendingSave){
         N.forEach(n=>{localPubs[n.id]=n.pubs||[];});
       }
       
-      // Sheets 데이터로 N 업데이트
       const newN=sheetsToN(data);
-      // 유효성 검증 + 자동 복구
       newN.forEach(n=>{
         if(!S.some(s=>s.id===n.cs)){n.cs='ideation';}
       });
       N=newN;
       
-      // pendingSave 중일 때만 로컬 pubs를 merge (아닐 때는 시트 데이터만 사용)
       N.forEach(n=>{
         if(pendingSave){
           const sheetsPubs=n.pubs||[];
@@ -536,7 +514,6 @@ async function loadFromSheets(force){
         while(n.pubs.length<5)n.pubs.push({name:'',url:''});
       });
       
-// localStorage 제거됨
       hasLocalData=true;
       R();syncStatus='synced';
     } else if(!hasLocalData){
@@ -564,15 +541,13 @@ async function saveToSheets(){
   updateSyncBadge();
 }
 
-// Debounced save
 let saveTimer=null;
-// ===== CRUD: Google Sheets 기반 =====
 let pendingSave=false;
 async function persist(){
   hasLocalData=true;
-  R(); // ✅ 즉시 UI 반영 (삭제/추가 결과를 바로 보여줌)
+  R(); 
   if(SHEETS_ENABLED){
-    pendingSave=true; // ✅ 폴링 차단 (레이스 컨디션 방지)
+    pendingSave=true; 
     clearTimeout(saveTimer);
     saveTimer=setTimeout(async ()=>{
       try{
@@ -591,7 +566,6 @@ async function persist(){
 async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await saveToSheets();await loadFromSheets(true);rSet();toast('동기화 완료');}
 
 let cv="overview",at=new Set(),ex=new Set(),dk=true,blinkOn=true,hideDone=false;
-// localStorage 제거됨
 if(!dk)document.documentElement.setAttribute('data-theme','light');
 const TD=new Date();
 
@@ -738,13 +712,12 @@ function hideDet(){document.getElementById('det-v').classList.add('hidden');docu
 // Tooltip
 function tipHtml(n,st,info){const statusLabels={done:'DONE',active:'진행중',pending:'대기',blocked:'BLOCKED'};let h=`<div class="tip-stage">${st.i} ${st.l}</div><div class="tip-status ${info.s}">${statusLabels[info.s]}</div>`;if(info.n)h+=`<div class="tip-memo">${info.n}</div>`;if(info.d){const days=dab(TD,new Date(info.d));const cls=days<0?'over':days<=5?'soon':'';const txt=days<0?`${Math.abs(days)}일 초과`:`${days}일 남음`;h+=`<div class="tip-due ${cls}">📅 ${info.d} (${txt})</div>`;}if(!info.n&&!info.d)h+=`<div class="tip-no">메모 없음</div>`;return h;}
 
-// ===== Drag and Drop =====
+// Drag and Drop
 let draggedId = null;
 
 function dragStart(e, id) {
   draggedId = id;
   e.dataTransfer.effectAllowed = 'move';
-  // 드래그 시 원본 요소의 투명도를 낮춤
   setTimeout(() => e.target.style.opacity = '0.4', 0);
 }
 
@@ -782,10 +755,9 @@ function drop(e, dropId) {
     const toIndex = N.findIndex(x => x.id === dropId);
 
     if (fromIndex !== -1 && toIndex !== -1) {
-      // 배열에서 요소 이동
       const [movedItem] = N.splice(fromIndex, 1);
       N.splice(toIndex, 0, movedItem);
-      persist(); // 변경된 순서를 저장 및 R() 렌더링 호출
+      persist(); 
     }
   }
   draggedId = null;
@@ -798,28 +770,103 @@ function R(){
 
   // Desktop Overview
   let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
-  ns.forEach((n, idx)=>{let rU='';S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){const u=uc(info.d);if(u==='uc'||u==='u3')rU='row-over';}});const dl=dli(n);const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';const hasDir=!!n.dir;
+  ns.forEach((n, idx)=>{
+    let rU='';
+    S.forEach(st=>{
+      const info=n.st[st.id];
+      if(info.s==='active'&&info.d){const u=uc(info.d);if(u==='uc'||u==='u3')rU='row-over';}
+    });
+    const dl=dli(n);const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';const hasDir=!!n.dir;
+    
     o+=`<tr class="${rU} draggable-item" draggable="true" ondragstart="dragStart(event,${n.id})" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event,${n.id})"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
-    S.forEach(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';const isE=!sl?.u&&!info.n;let cc='c ';if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}else if(info.s==='active')cc+=`a ${uc(info.d)}`;else if(info.s==='blocked')cc+='b';else cc+=`p${isE?' empty':''}`;let lb='';if(st.id==='complete'&&info.s==='done')lb='DONE';else if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';}else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCKED';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;});o+=`</tr>`;});
+    
+    S.forEach(st=>{
+      const info=n.st[st.id];const sl=n.sl[st.id];
+      const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';
+      const isE=!sl?.u&&!info.n;
+      let cc='c ';
+      if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}
+      else if(info.s==='active')cc+=`a ${uc(info.d)}`;
+      else if(info.s==='blocked')cc+='b';
+      else cc+=`p${isE?' empty':''}`;
+      
+      // ✅ 데스크톱: 상태와 등록 개수를 조합하여 표시하는 로직
+      let lb='';
+      if(st.id==='complete'&&info.s==='done') lb='DONE';
+      else if(st.id==='publishing'){
+        const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;
+        const pStr=pc>0?`${pc}곳`:'';
+        if(info.s==='done') lb=pStr?`DONE(${pStr})`:'DONE';
+        else if(info.s==='active') lb=pStr?`NOW(${pStr})`:'NOW';
+        else if(info.s==='blocked') lb=pStr?`BLK(${pStr})`:'BLOCKED';
+        else lb=pStr;
+      }else{
+        if(info.s==='active')lb='NOW';
+        else if(info.s==='blocked')lb='BLOCKED';
+        else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';
+      }
+      
+      const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';
+      o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;
+    });
+    o+=`</tr>`;
+  });
   o+=`</tbody></table></div>`;
 
   // Mobile Overview
   let mo='<div class="mob-ov">';
-  ns.forEach((n, idx)=>{const dl=dli(n);const cs=S.find(x=>x.id===n.cs)||S;const hasDir=!!n.dir;const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
-    mo+=`<div class="mob-card ${uCls} draggable-item" draggable="true" ondragstart="dragStart(event,${n.id})" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event,${n.id})" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';const mIsE=!sl?.u&&!info.n;if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+=`p${mIsE?' empty':''}`;const lb=st.id==='complete'&&info.s==='done'?'DONE':info.s==='active'?'NOW':info.s==='blocked'?'BLOCKED':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;}).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
+  ns.forEach((n, idx)=>{
+    const dl=dli(n);const cs=S.find(x=>x.id===n.cs)||S;const hasDir=!!n.dir;
+    const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);
+    let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
+    
+    mo+=`<div class="mob-card ${uCls} draggable-item" draggable="true" ondragstart="dragStart(event,${n.id})" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event,${n.id})" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{
+      const info=n.st[st.id];const sl=n.sl[st.id];
+      const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';
+      let sc='mob-seg ';const mIsE=!sl?.u&&!info.n;
+      if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}
+      else if(info.s==='active')sc+='a';
+      else if(info.s==='blocked')sc+='b';
+      else sc+=`p${mIsE?' empty':''}`;
+      
+      // ✅ 모바일 카드: 상태와 등록 개수를 조합하여 표시하는 로직
+      let lb='';
+      if(st.id==='complete'&&info.s==='done') lb='DONE';
+      else if(st.id==='publishing'){
+        const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;
+        const pStr=pc>0?`${pc}곳`:'';
+        if(info.s==='done') lb=pStr?`DONE(${pStr})`:'DONE';
+        else if(info.s==='active') lb=pStr?`NOW(${pStr})`:'NOW';
+        else if(info.s==='blocked') lb=pStr?`BLK(${pStr})`:'BLOCKED';
+        else lb=pStr;
+      }else{
+        if(info.s==='active')lb='NOW';
+        else if(info.s==='blocked')lb='BLOCKED';
+        else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';
+      }
+      return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;
+    }).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;
+  });
   mo+='</div>';
   document.getElementById('ov-v').innerHTML=o+mo;
 
   // Desktop Works
   let w=`<div class="sec-title">진행 상세 분석</div><div class="cards-grid">`;
-  ns.forEach((n, idx)=>{const prog=gp(n);const cs=S.find(x=>x.id===n.cs)||S;const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const note=n.st[n.cs]?.n||'';const dl=dli(n);const dlC=dl.st==='overdue'?'var(--danger)':dl.st==='warn'?'var(--warn)':'var(--done)';const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const rC=n.refs?n.refs.length:0;const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="wk-btn docs" onclick="event.stopPropagation()">📄 Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">📁 Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">✒️ NC</a>`;if(rC)btns+=`<span class="wk-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎 ${rC}</span>`;const dueI=aD?`<div class="wk-gi"><span class="wk-gl">현 단계 마감</span><span class="wk-gv ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</span></div>`:'';
-    w+=`<div class="wk ${tC} ${uCls} draggable-item" draggable="true" ondragstart="dragStart(event,${n.id})" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event,${n.id})" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>전척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">시작일</span><span class="wk-gv">${n.sd}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dlT}</span></div>${dueI}</div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--fg4);margin-bottom:3px;font-family:Sora"><span>일정</span><span style="color:${dlC}">${dl.p}%</span></div><div class="dl-bar"><div class="dl-fill" style="width:${dl.p}%;background:${dlC}"></div></div></div><div class="wk-btns">${btns}</div></div>`;});
+  ns.forEach((n, idx)=>{
+    const prog=gp(n);const cs=S.find(x=>x.id===n.cs)||S;const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const note=n.st[n.cs]?.n||'';const dl=dli(n);const dlC=dl.st==='overdue'?'var(--danger)':dl.st==='warn'?'var(--warn)':'var(--done)';const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const rC=n.refs?n.refs.length:0;const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;
+    let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="wk-btn docs" onclick="event.stopPropagation()">📄 Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">📁 Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">✒️ NC</a>`;if(rC)btns+=`<span class="wk-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎 ${rC}</span>`;
+    const dueI=aD?`<div class="wk-gi"><span class="wk-gl">현 단계 마감</span><span class="wk-gv ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</span></div>`:'';
+    w+=`<div class="wk ${tC} ${uCls} draggable-item" draggable="true" ondragstart="dragStart(event,${n.id})" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event,${n.id})" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>전척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">시작일</span><span class="wk-gv">${n.sd}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dlT}</span></div>${dueI}</div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--fg4);margin-bottom:3px;font-family:Sora"><span>일정</span><span style="color:${dlC}">${dl.p}%</span></div><div class="dl-bar"><div class="dl-fill" style="width:${dl.p}%;background:${dlC}"></div></div></div><div class="wk-btns">${btns}</div></div>`;
+  });
   w+='</div>';
 
   // Mobile Works
   let mw='<div class="mob-works">';
-  ns.forEach((n, idx)=>{const cs=S.find(x=>x.id===n.cs)||S;const dl=dli(n);const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const note=n.st[n.cs]?.n||'';let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
-    mw+=`<div class="mob-card ${uCls} draggable-item" draggable="true" ondragstart="dragStart(event,${n.id})" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event,${n.id})" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div>${note?`<div class="wk-note" style="font-size:11px;padding:8px 10px;margin-bottom:8px">${note}</div>`:''}<div class="mob-info"><div><span class="k">진행</span><div class="v">${gp(n)}% · 일정 ${dl.p}%</div></div><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlT}</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
+  ns.forEach((n, idx)=>{
+    const cs=S.find(x=>x.id===n.cs)||S;const dl=dli(n);const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const note=n.st[n.cs]?.n||'';
+    let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
+    mw+=`<div class="mob-card ${uCls} draggable-item" draggable="true" ondragstart="dragStart(event,${n.id})" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event,${n.id})" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div>${note?`<div class="wk-note" style="font-size:11px;padding:8px 10px;margin-bottom:8px">${note}</div>`:''}<div class="mob-info"><div><span class="k">진행</span><div class="v">${gp(n)}% · 일정 ${dl.p}%</div></div><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlT}</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;
+  });
   mw+='</div>';
   document.getElementById('wk-v').innerHTML=w+mw;
 }
@@ -876,4 +923,3 @@ startPolling();
 </script>
 </body>
 </html>
-```
