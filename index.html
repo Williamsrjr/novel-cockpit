@@ -407,24 +407,22 @@ body.no-blink .u1,body.no-blink .u2,body.no-blink .u3,body.no-blink .uc{animatio
 
 <script>
 // ===== 로고 클릭 시 이미지 모달 =====
-// ===== 로고 클릭 시 이미지 모달 =====
 function showLogoModal() {
-  const imageUrl = "https://williamsrjr.github.io/novel-cockpit/AArchi.png";
+  const imageUrl = "https://williamsrjr.github.io/novel-cockpit/logo.png";
   
-  const modalHtml = `
-    <div style="text-align:center; padding:10px;">
-      <h3 style="margin-bottom:20px; color:var(--accent);">Novel Cockpit</h3>
-      <img src="${imageUrl}" 
-           style="max-width:100%; max-height:75vh; border-radius:16px; box-shadow:0 15px 40px rgba(0,0,0,0.6);" 
-           alt="Novel Cockpit 로고"
-           onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400/1a2236/0ef?text=이미지+로딩+실패';">
-      <div style="margin-top:24px;">
-        <button class="m-btn m-cancel" onclick="closeModal()">닫기</button>
-      </div>
-    </div>
+  const overlay = document.createElement('div');
+  overlay.id = 'logo-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:300;display:flex;align-items:center;justify-content:center;cursor:pointer;';
+  overlay.onclick = () => overlay.remove();
+  
+  overlay.innerHTML = `
+    <img src="${imageUrl}" 
+         style="max-width:90vw; max-height:90vh; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,0.8); object-fit:contain;" 
+         alt="Novel Cockpit 로고"
+         onclick="event.stopPropagation()">
   `;
   
-  showModal(modalHtml);
+  document.body.appendChild(overlay);
 }
 const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:"🏗"},{id:"story",l:"BG",i:"🧬"},{id:"scene_structure",l:"씬구조",i:"🎬"},{id:"scene_beat",l:"씬비트",i:"🥁"},{id:"draft",l:"초고",i:"✍️"},{id:"revision",l:"퇴고",i:"🔄"},{id:"complete",l:"교정교열",i:"✅"},{id:"publishing",l:"발행",i:"📡"}];
 const TAGS=["SF","문학","에세이","BL","야설","에로","판타지","엽편","단편","중편","장편"];
