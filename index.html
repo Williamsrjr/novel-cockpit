@@ -730,7 +730,18 @@ function R(){
       else cc+=`p${isE?' empty':''}`;
       let lb='';
       if(st.id==='complete'&&info.s==='done')lb='DONE';
-      else if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';}
+      else if(st.id==='publishing'){
+  const pc = (n.pubs||[]).filter(p => p.name && p.url).length;
+  if(info.s === 'done'){
+    lb = `완료(${pc}곳)`;
+  } else if(info.s === 'active'){
+    lb = `진행중(${pc}곳)`;
+  } else if(pc > 0){
+    lb = `${pc}곳`;
+  } else {
+    lb = '';
+  }
+}
       else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCKED';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}
       const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';
       o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;
