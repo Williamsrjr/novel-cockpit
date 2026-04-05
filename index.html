@@ -406,7 +406,26 @@ let N=[];
 const API_URL = 'https://script.google.com/macros/s/AKfycbwvgIYcKLFj33pTGTS1mSICSiMowFRzwaLsSWQOEZVSwNzzUYRBoUyEdg7Ex1mGEc7W/exec';
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
-function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso;const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);}
+function fmtD(v){
+  if(!v || v==='NaN' || v==='undefined' || v==='null') return '';
+  const s = String(v).trim();
+  if(!s) return '';
+
+  // 이미 YYYY-MM-DD 형식이면 그대로 반환
+  const iso = /^\d{4}-\d{2}-\d{2}/.exec(s);
+  if(iso) return iso[0];
+
+  // Google Sheets에서 넘어온 날짜를 안전하게 처리
+  let d = new Date(s);
+  if(isNaN(d.getTime())) return '';
+
+  // 한국 시간(KST) 기준으로 날짜만 정확히 추출
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
 function clV(v){return(!v||v==='NaN'||v==='undefined'||v==='null')?'':String(v);}
 function sheetsToN(data){
   const novels=data.novels.map(row=>({
