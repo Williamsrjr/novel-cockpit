@@ -330,7 +330,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .se-sel,.se-di{background:var(--bg1);border:1px solid var(--border2);color:var(--fg2);border-radius:6px;padding:4px 6px;font-size:10px;font-family:inherit;width:100%;}
 .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;}
 .sdot.done{background:var(--done);}
-.sdot.active{background:var(--active);}
+.sdot.active(background:var(--active);}
 .sdot.pending{background:var(--fg4);}
 .sdot.blocked{background:var(--blocked);}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:12px 24px;font-size:12px;color:var(--fg);z-index:999;box-shadow:0 12px 40px rgba(0,0,0,.4);animation:toast-in .3s ease,toast-out .3s ease 1.7s forwards;font-family:'Sora';font-weight:500;backdrop-filter:blur(12px);}
@@ -403,10 +403,27 @@ const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:
 const TAGS=["SF","문학","엽편","단편","중편","장편","야설","에로","판타지"];
 const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
 let N=[];
-const API_URL = 'https://script.google.com/macros/s/AKfycbwvgIYcKLFj33pTGTS1mSICSiMowFRzwaLsSWQOEZVSwNzzUYRBoUyEdg7Ex1mGEc7W/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyHGtDx6gkoYaAG9N-LotBKAC9HJglSCO-h6h17TbyzjMvjtL3j1S0J3Z222Nf61PX1/exec';
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
-function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso;const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);}
+// 날짜 포맷팅 함수 수정 (타임존 오류 방지)
+function fmtD(v) {
+  if (!v || v === 'NaN' || v === 'undefined' || v === 'null') return '';
+  const s = String(v).trim();
+  if (!s) return '';
+  
+  const isoMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) return isoMatch;
+  
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return '';
+  
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function clV(v){return(!v||v==='NaN'||v==='undefined'||v==='null')?'':String(v);}
 function sheetsToN(data){
   const novels=data.novels.map(row=>({
@@ -469,30 +486,8 @@ async function loadFromSheets(force){
     const data=await res.json();
     if(data.error){syncStatus='error';updateSyncBadge();return;}
     if(data.novels&&data.novels.length>0){
-      const localPubs={};
-      if(pendingSave){
-        N.forEach(n=>{localPubs[n.id]=n.pubs||[];});
-      }
       const newN=sheetsToN(data);
-      newN.forEach(n=>{
-        if(!S.some(s=>s.id===n.cs)){n.cs='ideation';}
-      });
       N=newN;
-      N.forEach(n=>{
-        if(pendingSave){
-          const sheetsPubs=n.pubs||[];
-          const localPubsForN=localPubs[n.id]||[];
-          const merged=[...sheetsPubs];
-          localPubsForN.forEach(localPub=>{
-            if(!localPub.name||!localPub.url)return;
-            const exists=merged.some(p=>p.name===localPub.name&&p.url===localPub.url);
-            if(!exists){merged.push(localPub);}
-          });
-          n.pubs=merged;
-        }
-        while(n.pubs.length<5)n.pubs.push({name:'',url:''});
-      });
-      hasLocalData=true;
       R();syncStatus='synced';
     } else if(!hasLocalData){
       await saveToSheets();
@@ -505,18 +500,18 @@ async function loadFromSheets(force){
 }
 
 async function saveToSheets(){
-  if(!SHEETS_ENABLED)return;
+  if(!SHEETS_ENABLED)return false;
   isSaving=true;
   syncStatus='syncing';updateSyncBadge();
   try{
     const payload={action:'save_all',...nToSheets(N)};
     const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     const result=await res.json();
-    if(result.ok){syncStatus='synced';hasLocalData=true;}
-    else syncStatus='error';
-  }catch(e){syncStatus='error';}
+    isSaving=false;
+    if(result.ok) return true;
+  }catch(e){}
   isSaving=false;
-  updateSyncBadge();
+  return false;
 }
 
 let saveTimer=null;
@@ -529,21 +524,24 @@ async function persist(){
     clearTimeout(saveTimer);
     saveTimer=setTimeout(async ()=>{
       try{
-        await saveToSheets();
-        pendingSave=false;
-        await loadFromSheets(true);
+        const success = await saveToSheets();
+        if(success) {
+            pendingSave=false;
+            syncStatus='synced';
+            updateSyncBadge();
+        }
       }catch(e){
         pendingSave=false;
         syncStatus='error';
         updateSyncBadge();
       }
-    },800);
+    },1000);
   }
 }
+
 async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await saveToSheets();await loadFromSheets(true);rSet();toast('동기화 완료');}
 
 let cv="overview",at=new Set(),ex=new Set(),dk=true,blinkOn=true,hideDone=false;
-if(!dk)document.documentElement.setAttribute('data-theme','light');
 const TD=new Date();
 
 const si=id=>S.findIndex(x=>x.id===id);
@@ -561,44 +559,21 @@ function togBlink(){blinkOn=!blinkOn;document.body.classList.toggle('no-blink',!
 function togHideDone(){hideDone=!hideDone;R();rSet();}
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
-// === 드래그 앤 드롭 로직 ===
 let draggedId = null;
 let dragType = null;
-
-function drag(e, id, type) {
-    draggedId = id;
-    dragType = type;
-    e.dataTransfer.effectAllowed = "move";
-    e.target.style.opacity = "0.5";
-}
-
-function allowDrop(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-}
-
+function drag(e, id, type) { draggedId = id; dragType = type; e.dataTransfer.effectAllowed = "move"; e.target.style.opacity = "0.5"; }
+function allowDrop(e) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }
 function drop(e, targetId, type) {
     e.preventDefault();
     if (draggedId === targetId || dragType !== type) return;
-
     const draggedIdx = N.findIndex(x => x.id === draggedId);
     const targetIdx = N.findIndex(x => x.id === targetId);
-
     const [removed] = N.splice(draggedIdx, 1);
     N.splice(targetIdx, 0, removed);
-
-    e.target.style.opacity = "1";
-    persist(); 
-    toast("작품 순서가 변경되었습니다.");
+    persist(); toast("순서 변경됨");
 }
+document.addEventListener("dragend", (e) => { if (e.target.classList && (e.target.classList.contains('wk') || e.target.tagName === 'TR')) e.target.style.opacity = "1"; });
 
-document.addEventListener("dragend", (e) => {
-    if (e.target.classList && (e.target.classList.contains('wk') || e.target.tagName === 'TR')) {
-        e.target.style.opacity = "1";
-    }
-}, false);
-
-// Context Menu
 let ctxNid=0,ctxSid='';
 function showCtx(e,nid,sid){e.preventDefault();e.stopPropagation();ctxNid=nid;ctxSid=sid;const n=N.find(x=>x.id===nid);const info=n.st[sid];const sl=n.sl[sid];const stage=S.find(x=>x.id===sid);const ctx=document.getElementById('ctx-menu');const hasUrl=sl&&sl.u;
   let h=`<div class="ctx-title">${stage.i} ${stage.l} — ${n.title}</div><div class="ctx-sep"></div>`;
@@ -606,186 +581,83 @@ function showCtx(e,nid,sid){e.preventDefault();e.stopPropagation();ctxNid=nid;ct
   h+=`<div class="ctx-item ${info.s==='active'?'active-item':''}" onclick="ctxStatus('active')"><span class="ci-icon">◉</span><span class="ci-label">진행중</span>${info.s==='active'?'<span class="ci-key">현재</span>':''}</div>`;
   h+=`<div class="ctx-item ${info.s==='done'?'done-item':''}" onclick="ctxStatus('done')"><span class="ci-icon">●</span><span class="ci-label">완료</span>${info.s==='done'?'<span class="ci-key">현재</span>':''}</div>`;
   h+=`<div class="ctx-item ${info.s==='blocked'?'blocked-item':''}" onclick="ctxStatus('blocked')"><span class="ci-icon">⊘</span><span class="ci-label">막힘</span>${info.s==='blocked'?'<span class="ci-key">현재</span>':''}</div>`;
-  h+=`<div class="ctx-sep"></div><div class="ctx-item" onclick="ctxMemo()"><span class="ci-icon">✏️</span><span class="ci-label">메모 ${info.n?'수정':'남기기'}</span></div>`;
-  if(hasUrl){h+=`<div class="ctx-sep"></div><div class="ctx-item" onclick="ctxOpen()"><span class="ci-icon">↗️</span><span class="ci-label">새 탭에서 열기</span></div><div class="ctx-item" onclick="ctxCopy()"><span class="ci-icon">📋</span><span class="ci-label">URL 복사</span></div>`;}
+  h+=`<div class="ctx-sep"></div><div class="ctx-item" onclick="ctxMemo()"><span class="ci-icon">✏️</span><span class="ci-label">메모 남기기</span></div>`;
+  if(hasUrl){h+=`<div class="ctx-sep"></div><div class="ctx-item" onclick="ctxOpen()"><span class="ci-icon">↗️</span><span class="ci-label">새 탭에서 열기</span></div>`;}
   h+=`<div class="ctx-sep"></div><div class="ctx-item" onclick="ctxEdit()"><span class="ci-icon">⚙️</span><span class="ci-label">전체 편집…</span></div>`;
-  ctx.innerHTML=h;ctx.classList.remove('hidden');let x=e.clientX,y=e.clientY;const w=ctx.offsetWidth,ht=ctx.offsetHeight;if(x+w>window.innerWidth)x=window.innerWidth-w-8;if(y+ht>window.innerHeight)y=window.innerHeight-ht-8;ctx.style.left=x+'px';ctx.style.top=y+'px';}
+  ctx.innerHTML=h;ctx.classList.remove('hidden');let x=e.clientX,y=e.clientY;ctx.style.left=x+'px';ctx.style.top=y+'px';}
 function hideCtx(){document.getElementById('ctx-menu').classList.add('hidden');}
-document.addEventListener('click',hideCtx);document.addEventListener('scroll',hideCtx,true);
-function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();persist();const labels={pending:'대기',active:'진행중',done:'DONE',blocked:'BLOCKED'};toast(`${S.find(x=>x.id===ctxSid).l} → ${labels[s]}`);}
-function ctxMemo(){hideCtx();const n=N.find(x=>x.id===ctxNid);const info=n.st[ctxSid];const stage=S.find(x=>x.id===ctxSid);showModal(`<h3>✏️ 메모</h3><div class="sub">${n.title} — ${stage.l}</div><label>메모</label><textarea id="m-memo" placeholder="이 단계에 대한 메모...">${info.n||''}</textarea><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveMemo()">저장</button></div>`);}
-function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();persist();toast('메모 저장됨');}
-function ctxOpen(){hideCtx();window.open(N.find(x=>x.id===ctxNid).sl[ctxSid].u,'_blank');}
-function ctxCopy(){hideCtx();navigator.clipboard.writeText(N.find(x=>x.id===ctxNid).sl[ctxSid].u).then(()=>toast('URL 복사됨')).catch(()=>toast('복사 실패'));}
-function ctxEdit(){hideCtx();cellDbl(null,ctxNid,ctxSid);}
+document.addEventListener('click',hideCtx);
+function ctxStatus(s){const n=N.find(x=>x.id===ctxNid);n.st[ctxSid].s=s;recomp(n);hideCtx();persist();}
+function ctxMemo(){hideCtx();const n=N.find(x=>x.id===ctxNid);const info=n.st[ctxSid];showModal(`<h3>✏️ 메모</h3><textarea id="m-memo">${info.n||''}</textarea><div class="m-btns"><button class="m-btn m-ok" onclick="saveMemo()">저장</button></div>`);}
+function saveMemo(){N.find(x=>x.id===ctxNid).st[ctxSid].n=document.getElementById('m-memo').value;closeModal();persist();}
+function ctxOpen(){window.open(N.find(x=>x.id===ctxNid).sl[ctxSid].u,'_blank');}
+function ctxEdit(){cellDbl(null,ctxNid,ctxSid);}
 
 function showModal(h){document.getElementById('modal-bg').classList.remove('hidden');const m=document.getElementById('modal');m.classList.remove('hidden');m.innerHTML=h;}
 function closeModal(){document.getElementById('modal').classList.add('hidden');document.getElementById('modal-bg').classList.add('hidden');}
 function tagsCheckboxes(selected){return TAGS.map(t=>`<input type="checkbox" class="m-tag-cb" id="mt-${t}" value="${t}" ${selected.includes(t)?'checked':''}><label class="m-tag-label" for="mt-${t}">${t}</label>`).join('');}
 function getCheckedTags(){return TAGS.filter(t=>document.getElementById('mt-'+t)?.checked);}
 
-let titleTimer=null;
-function handleTitle(e,nid){if(e)e.stopPropagation();if(titleTimer){clearTimeout(titleTimer);titleTimer=null;titleDbl(e,nid);return;}titleTimer=setTimeout(()=>{titleTimer=null;titleClick(nid);},300);}
-function titleClick(nid){const n=N.find(x=>x.id===nid);if(n.dir)window.open(n.dir,'_blank');else titleDbl(null,nid);}
-function titleDbl(e,nid){if(e)e.preventDefault();e&&e.stopPropagation();const n=N.find(x=>x.id===nid);showModal(`<h3>✏️ 작품 편집</h3><div class="sub">${n.title}</div><label>제목</label><input type="text" id="m-title" value="${n.title}"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes(n.tags)}</div><label>분량</label><input type="text" id="m-len" value="${n.len}" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="${n.dir||''}" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${n.sd}"/><label>목표 완료일</label><input type="date" id="m-ed" value="${n.ed}"/><div class="m-btns" style="justify-content:space-between"><button class="m-btn m-danger" onclick="deleteNovel(${nid})">삭제</button><div style="display:flex;gap:8px"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveTitleEdit(${nid})">저장</button></div></div>`);}
-function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();persist();toast('저장됨');}
-function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();hideDet();persist();toast('삭제됨');}
-function addNovel(){const today=new Date().toISOString().slice(0,10);showModal(`<h3>➕ 새 작품 추가</h3><div class="sub">새 프로젝트를 시작합니다</div><label>제목</label><input type="text" id="m-title" value="" placeholder="작품 제목"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes([])}</div><label>분량</label><input type="text" id="m-len" value="" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${today}"/><label>목표 완료일</label><input type="date" id="m-ed" value=""/><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveNewNovel()">추가</button></div>`);}
-function saveNewNovel(){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const newId=N.length?Math.max(...N.map(x=>x.id))+1:1;const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';const emptyPubs=[];for(let i=0;i<5;i++)emptyPubs.push({name:'',url:''});N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:emptyPubs,up:new Date().toISOString().slice(0,10)});closeModal();persist();toast(`"${title}" 추가됨`);}
+function handleTitle(e,nid){e.stopPropagation();const n=N.find(x=>x.id===nid);if(n.dir)window.open(n.dir,'_blank');else titleDbl(null,nid);}
+function titleDbl(e,nid){const n=N.find(x=>x.id===nid);showModal(`<h3>✏️ 작품 편집</h3><label>제목</label><input type="text" id="m-title" value="${n.title}"/><label>태그</label><div class="m-tags-grid">${tagsCheckboxes(n.tags)}</div><label>분량</label><input type="text" id="m-len" value="${n.len}"/><label>Drive 폴더</label><input type="url" id="m-dir" value="${n.dir||''}"/><label>시작일</label><input type="date" id="m-sd" value="${n.sd}"/><label>목표일</label><input type="date" id="m-ed" value="${n.ed}"/><div class="m-btns"><button class="m-btn m-danger" onclick="deleteNovel(${nid})">삭제</button><button class="m-btn m-ok" onclick="saveTitleEdit(${nid})">저장</button></div>`);}
+function saveTitleEdit(nid){const n=N.find(x=>x.id===nid);n.title=document.getElementById('m-title').value;n.tags=getCheckedTags();n.len=document.getElementById('m-len').value;n.dir=document.getElementById('m-dir').value;n.sd=document.getElementById('m-sd').value;n.ed=document.getElementById('m-ed').value;closeModal();persist();}
+function deleteNovel(nid){if(!confirm('삭제하시겠습니까?'))return;N=N.filter(x=>x.id!==nid);closeModal();persist();}
+function addNovel(){const today=new Date().toISOString().slice(0,10);showModal(`<h3>➕ 새 작품 추가</h3><label>제목</label><input type="text" id="m-title" value=""/><div class="m-tags-grid">${tagsCheckboxes([])}</div><label>시작일</label><input type="date" id="m-sd" value="${today}"/><div class="m-btns"><button class="m-btn m-ok" onclick="saveNewNovel()">추가</button></div>`);}
+function saveNewNovel(){const title=document.getElementById('m-title').value;if(!title)return;const newId=N.length?Math.max(...N.map(x=>x.id))+1:1;const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:'',sd:document.getElementById('m-sd').value,ed:'',dir:'',links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:[],up:new Date().toISOString().slice(0,10)});closeModal();persist();}
 
-let cellTimer=null;
-function handleCell(e,nid,sid){if(e)e.stopPropagation();if(cellTimer){clearTimeout(cellTimer);cellTimer=null;cellDbl(e,nid,sid);return;}cellTimer=setTimeout(()=>{cellTimer=null;cellClick(e,nid,sid);},300);}
-function cellClick(e,nid,sid){
+function handleCell(e,nid,sid){
+  e.stopPropagation();
   const n=N.find(x=>x.id===nid);
   if(sid==='publishing'){
-    if(!n.pubs)n.pubs=[];
-    const filled=n.pubs.filter(p=>p.name&&p.url);
+    const filled=(n.pubs||[]).filter(p=>p.name&&p.url);
     if(filled.length===0){cellDbl(null,nid,sid);return;}
     const ps=document.getElementById('pub-sel');
-    let h=`<div class="pub-sel-title">📡 발행 사이트</div>`;
-    filled.forEach(p=>{h+=`<a class="pub-sel-item" href="${p.url}" target="_blank" onclick="hidePubSel()"><span class="psi-dot"></span>${p.name}</a>`;});
-    ps.innerHTML=h;ps.classList.remove('hidden');
-    const x=e?e.clientX:window.innerWidth/2;const y=e?e.clientY:window.innerHeight/2;
-    ps.style.left=Math.min(x,window.innerWidth-220)+'px';ps.style.top=Math.min(y,window.innerHeight-200)+'px';
+    ps.innerHTML=`<div class="pub-sel-title">📡 발행</div>`+filled.map(p=>`<a class="pub-sel-item" href="${p.url}" target="_blank">${p.name}</a>`).join('');
+    ps.classList.remove('hidden');ps.style.left=e.clientX+'px';ps.style.top=e.clientY+'px';
     return;
   }
-  const sl=n.sl[sid];if(sl&&sl.u)window.open(sl.u,'_blank');
+  const sl=n.sl[sid];if(sl&&sl.u)window.open(sl.u,'_blank');else cellDbl(null,nid,sid);
 }
-function hidePubSel(){document.getElementById('pub-sel').classList.add('hidden');}
-document.addEventListener('click',function(e){if(!e.target.closest('.pub-sel'))hidePubSel();});
-
 function cellDbl(e,nid,sid){
-  if(e){e.preventDefault();e.stopPropagation();}
-  const n=N.find(x=>x.id===nid);const info=n.st[sid];const stage=S.find(x=>x.id===sid);
+  const n=N.find(x=>x.id===nid);const info=n.st[sid];const sl=n.sl[sid];
   if(sid==='publishing'){
-    if(!n.pubs)n.pubs=[{name:'',url:''},{name:'',url:''},{name:'',url:''},{name:'',url:''},{name:'',url:''}];
-    while(n.pubs.length<5)n.pubs.push({name:'',url:''});
-    let pubInputs='';
-    for(let i=0;i<5;i++){pubInputs+=`<div class="pub-input-row"><span class="pub-input-num">${i+1}</span><input type="text" id="m-pn${i}" value="${n.pubs[i]?.name||''}" placeholder="사이트 이름"/><input type="url" id="m-pu${i}" value="${n.pubs[i]?.url||''}" placeholder="https://..."/></div>`;}
-    showModal(`<h3>📡 발행</h3><div class="sub">${n.title} — 발행 사이트 (최대 5곳)</div>
-      ${pubInputs}
-      <label>상태</label><select id="m-status"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option></select>
-      <label>마감일</label><input type="date" id="m-due" value="${info.d||''}"/>
-      <div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="savePubEdit(${nid})">저장</button></div>`);
-    return;
+    let h=`<h3>📡 발행</h3>`;for(let i=0;i<3;i++)h+=`<div class="pub-input-row"><input type="text" id="m-pn${i}" value="${n.pubs[i]?.name||''}"/><input type="url" id="m-pu${i}" value="${n.pubs[i]?.url||''}"/></div>`;
+    showModal(h+`<div class="m-btns"><button class="m-btn m-ok" onclick="savePubEdit(${nid})">저장</button></div>`);
+  }else{
+    showModal(`<h3>${S.find(x=>x.id===sid).l}</h3><label>URL</label><input type="url" id="m-url" value="${sl?sl.u:''}"/><label>마감일</label><input type="date" id="m-due" value="${info.d||''}"/><div class="m-btns"><button class="m-btn m-ok" onclick="saveCellEdit(${nid},'${sid}')">저장</button></div>`);
   }
-  const sl=n.sl[sid];showModal(`<h3>${stage.i} ${stage.l}</h3><div class="sub">${n.title}</div><label>문서 URL</label><input type="url" id="m-url" value="${sl?sl.u:''}" placeholder="https://..."/><label>도구</label><div style="display:flex;gap:12px;margin-bottom:4px"><label style="font-size:12px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:4px;margin:0"><input type="radio" name="m-tool" value="gdoc" ${(!sl||!sl.t||sl.t==='gdoc'||sl.t==='gdrive')?'checked':''}> Docs</label><label style="font-size:12px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:4px;margin:0"><input type="radio" name="m-tool" value="nc" ${sl&&sl.t==='nc'?'checked':''}> NC</label></div><label>마감일</label><input type="date" id="m-due" value="${info.d||''}"/><label>상태</label><select id="m-status"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveCellEdit(${nid},'${sid}')">저장</button></div>`);
 }
-async function savePubEdit(nid){
-  const n=N.find(x=>x.id===nid);
-  n.pubs=[];
-  for(let i=0;i<5;i++){
-    n.pubs.push({name:document.getElementById('m-pn'+i).value,url:document.getElementById('m-pu'+i).value});
-  }
-  n.st.publishing.s=document.getElementById('m-status').value;
-  n.st.publishing.d=document.getElementById('m-due').value;
-  recomp(n);
-  closeModal();
-  persist();
-  toast('저장됨');
+function savePubEdit(nid){const n=N.find(x=>x.id===nid);n.pubs=[];for(let i=0;i<3;i++)n.pubs.push({name:document.getElementById('m-pn'+i).value,url:document.getElementById('m-pu'+i).value});closeModal();persist();}
+function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.st[sid].d=document.getElementById('m-due').value;closeModal();persist();}
+
+function openSet(){document.getElementById('set-ov').classList.remove('hidden');rSet();}
+function closeSet(){document.getElementById('set-ov').classList.add('hidden');}
+function rSet(){
+  let h=`<div class="sp-h"><h2>⚙️ 관리</h2><button onclick="closeSet()">✕</button></div><button class="m-btn m-ok" onclick="manualSync()">수동 동기화</button>`;
+  document.getElementById('set-p').innerHTML=h;
 }
-function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();toast('저장됨');}
 
-function openSet(){document.getElementById('set-ov').classList.remove('hidden');document.body.style.overflow='hidden';rSet();}
-function closeSet(){document.getElementById('set-ov').classList.add('hidden');document.body.style.overflow='';}
-function tExp(id){if(ex.has(id))ex.delete(id);else ex.add(id);rSet();}
-function uSS(nid,sid,v){N.find(x=>x.id===nid).st[sid].s=v;recomp(N.find(x=>x.id===nid));persist();rSet();R();}
-function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;persist();}
-function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;persist();rSet();}
-function rSet(){let h=`<div class="sp-h"><h2>⚙️ 관리</h2><button class="sp-x" onclick="closeSet()">✕</button></div><div class="sp-sec"><div class="sp-st">🎨 화면</div><div class="sp-row"><div><div class="sp-lbl">다크 모드</div></div><label class="tog"><input type="checkbox" ${dk?'checked':''} onchange="togTheme()"><span class="tog-s"></span></label></div></div><div class="sp-sec"><div class="sp-st">📋 작품 관리</div><table class="mt"><thead><tr><th>작품</th><th>현재</th><th>시작일</th><th>목표일</th><th></th></tr></thead><tbody>`;
-  N.forEach(n=>{const cs=S.find(x=>x.id===n.cs)||S;const isE=ex.has(n.id);h+=`<tr><td><span class="mt-t">${n.title}</span></td><td><span class="sdot ${n.st[n.cs].s}"></span> ${cs.l}</td><td><input type="date" class="mt-i" value="${n.sd}" onchange="uND(${n.id},'sd',this.value)"></td><td><input type="date" class="mt-i" value="${n.ed}" onchange="uND(${n.id},'ed',this.value)"></td><td><button class="eb" onclick="tExp(${n.id})">${isE?'접기':'▾'}</button></td></tr>`;if(isE){h+=`<tr><td colspan="5" style="padding:0 0 6px"><div class="se-w"><div class="se-r se-hd"><div>단계</div><div>상태</div><div>마감일</div></div>`;S.forEach(st=>{const info=n.st[st.id];h+=`<div class="se-r"><div class="se-n"><span class="sdot ${info.s}"></span>${st.i} ${st.l}</div><div><select class="se-sel" onchange="uSS(${n.id},'${st.id}',this.value)"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select></div><div><input type="date" class="se-di" value="${info.d||''}" onchange="uSD(${n.id},'${st.id}',this.value)"></div></div>`;});h+=`</div></td></tr>`;}});
-  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">☁️ Google Sheets 동기화</div><div class="sp-row"><div><div class="sp-lbl">상태</div><div class="sp-desc">${SHEETS_ENABLED?'연결됨 — '+API_URL.slice(0,50)+'…':'❌ 미설정'}</div></div>${SHEETS_ENABLED?`<button class="m-btn m-ok" style="padding:6px 14px;font-size:12px" onclick="manualSync()">수동 동기화</button>`:''}</div></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" ${blinkOn?'checked':''} onchange="togBlink()"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox" ${hideDone?'checked':''} onchange="togHideDone()"><span class="tog-s"></span></label></div></div>`;
-  document.getElementById('set-p').innerHTML=h;}
-
-function showDet(id){const n=N.find(x=>x.id===id);document.getElementById('main-view').classList.add('hidden');const dv=document.getElementById('det-v');dv.classList.remove('hidden');
-  let lk='';if(n.links.gdoc)lk+=`<a href="${n.links.gdoc}" target="_blank" class="d-lk docs">📄 Docs</a>`;if(n.links.gdrive)lk+=`<a href="${n.links.gdrive}" target="_blank" class="d-lk drive">📁 Drive</a>`;if(n.links.nc)lk+=`<a href="${n.links.nc}" target="_blank" class="d-lk nc">✒️ NC</a>`;
-  let tl='';S.forEach((st,i)=>{const info=n.st[st.id];const isC=n.cs===st.id;const dc=info.s==='done'?'done':info.s==='blocked'?'blocked':isC?'active':'pending';const dot=info.s==='done'?'✓':info.s==='blocked'?'⊘':isC?st.i:(i+1);const lc=info.s==='done'?'done':'pending';const cc=isC?'as':info.s==='blocked'?'bs':info.s==='pending'?'ps':'';const stxt=info.s==='done'?'DONE':info.s==='active'?'진행중':info.s==='blocked'?'BLOCKED':'대기';const sl=n.sl[st.id];let tlk='';if(sl&&sl.u){const tc=sl.t==='nc'?'nc':'docs';tlk=`<a href="${sl.u}" target="_blank" class="tl-tl ${tc}">${sl.t==='nc'?'NC':'Docs'} →</a>`;}const dueI=info.d?` <span style="font-size:10px;color:var(--fg4);font-family:Sora">📅${info.d}</span>`:'';tl+=`<div class="tl-i"><div class="tl-l"><div class="tl-d ${dc}">${dot}</div>${i<S.length-1?`<div class="tl-ln ${lc}"></div>`:''}</div><div class="tl-b ${cc}"><div class="tl-r"><span class="n">${st.l} ${tlk}${dueI}</span><span class="st ${info.s}">${stxt}</span></div>${info.n?`<div class="tl-note">${info.n}</div>`:''}</div></div>`;});
-  let refs=`<div class="ref-s"><h3>📎 참고자료</h3>`;if(!n.refs||!n.refs.length)refs+=`<div class="ref-empty">없음</div>`;else{refs+=`<div class="ref-l">`;n.refs.forEach(r=>{refs+=`<div class="ref-c"><span style="font-size:20px">${r.i}</span><div style="flex:1"><div class="rn">${r.n}</div><div class="rd">${r.d}</div></div><a href="${r.u}" target="_blank">열기</a></div>`;});refs+=`</div>`;}refs+=`</div>`;
-  dv.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start"><button class="back" onclick="hideDet()">← 돌아가기</button><button class="icon-btn" onclick="hideDet();titleDbl(null,${id})" title="편집" style="font-size:14px">✏️</button></div><div class="dt">${n.title}</div><div class="d-tags">${n.tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div><div class="d-meta"><span>분량 ${n.len}</span><span>시작 ${n.sd}</span><span>목표 ${n.ed}</span></div><div class="d-links">${lk}</div>${tl}${refs}`;}
+function showDet(id){const n=N.find(x=>x.id===id);document.getElementById('main-view').classList.add('hidden');document.getElementById('det-v').classList.remove('hidden');document.getElementById('det-v').innerHTML=`<button onclick="hideDet()">돌아가기</button><h1>${n.title}</h1>`;}
 function hideDet(){document.getElementById('det-v').classList.add('hidden');document.getElementById('main-view').classList.remove('hidden');}
 
-function tipHtml(n,st,info){const statusLabels={done:'DONE',active:'진행중',pending:'대기',blocked:'BLOCKED'};let h=`<div class="tip-stage">${st.i} ${st.l}</div><div class="tip-status ${info.s}">${statusLabels[info.s]}</div>`;if(info.n)h+=`<div class="tip-memo">${info.n}</div>`;if(info.d){const days=dab(TD,new Date(info.d));const cls=days<0?'over':days<=5?'soon':'';const txt=days<0?`${Math.abs(days)}일 초과`:`${days}일 남음`;h+=`<div class="tip-due ${cls}">📅 ${info.d} (${txt})</div>`;}if(!info.n&&!info.d)h+=`<div class="tip-no">메모 없음</div>`;return h;}
-
 function R(){
-  const ns=gf();const ac=N.filter(n=>!["complete","publishing"].includes(n.cs)).length;
-  document.getElementById('stats').textContent=`${N.length} projects · ${ac} active`;
-
+  const ns=gf();
   let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
-  ns.forEach((n, idx)=>{
-    let rU='';
-    S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){if(uc(info.d)==='uc'||uc(info.d)==='u3')rU='row-over';}});
-    const dl=dli(n);
-    const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';
-    const hasDir=!!n.dir;
-    o+=`<tr class="${rU}" draggable="true" ondragstart="drag(event, ${n.id}, 'row')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'row')"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
+  ns.forEach((n,idx)=>{
+    o+=`<tr draggable="true" ondragstart="drag(event,${n.id},'row')" ondragover="allowDrop(event)" ondrop="drop(event,${n.id},'row')"><td><span class="ov-nm" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span></td>`;
     S.forEach(st=>{
-      const info=n.st[st.id];
-      const sl=n.sl[st.id];
-      const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';
-      const isE=!sl?.u&&!info.n;
-      let cc='c ';
-      if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}
-      else if(info.s==='active')cc+=`a ${uc(info.d)}`;
-      else if(info.s==='blocked')cc+='b';
-      else cc+=`p${isE?' empty':''}`;
-      let lb='';
-      if(st.id==='complete'&&info.s==='done')lb='DONE';
-      else if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';}
-      else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCKED';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}
-      const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';
-      o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;
+      const info=n.st[st.id];const sl=n.sl[st.id];let cc='c ';
+      if(info.s==='done')cc+='d none';else if(info.s==='active')cc+='a '+uc(info.d);else if(info.s==='blocked')cc+='b';else cc+='p';
+      o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${info.s==='active'?'NOW':''}</span></div></td>`;
     });
     o+=`</tr>`;
   });
-  o+=`</tbody></table></div>`;
-
-  let mo='<div class="mob-ov">';
-  ns.forEach((n, idx)=>{
-    const dl=dli(n);
-    const cs=S.find(x=>x.id===n.cs)||S;
-    const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;
-    const aD=n.st[n.cs]?.d||'';
-    const uCls=uc(aD);
-    let btns='';
-    if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;
-    if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;
-    if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;
-    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{
-      const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+=`p${!sl?.u&&!info.n?' empty':''}`;const lb=st.id==='complete'&&info.s==='done'?'DONE':info.s==='active'?'NOW':info.s==='blocked'?'BLOCKED':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';
-      return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;
-    }).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div></div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;
-  });
-  mo+='</div>';
-  document.getElementById('ov-v').innerHTML=o+mo;
-
-  let w=`<div class="sec-title">진행 상세 분석</div><div class="cards-grid">`;
-  ns.forEach((n, idx)=>{
-    const prog=gp(n);const cs=S.find(x=>x.id===n.cs)||S;const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const dl=dli(n);const note=n.st[n.cs]?.n||'';const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';const aD=n.st[n.cs]?.d||'';
-    let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="wk-btn docs" onclick="event.stopPropagation()">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">NC</a>`;
-    w+=`<div class="wk ${tC} ${uc(aD)}" draggable="true" ondragstart="drag(event, ${n.id}, 'card')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'card')" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>진척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dl.r}일</span></div>${aD?`<div class="wk-gi"><span class="wk-gl">마감</span><span class="wk-gv">${aD}</span></div>`:''}</div><div class="wk-btns">${btns}</div></div>`;
-  });
-  w+='</div>';
-  document.getElementById('wk-v').innerHTML=w;
+  document.getElementById('ov-v').innerHTML=o+`</tbody></table></div>`;
 }
 
 rp();
 loadFromSheets(true);
-updateSyncBadge();
-
-let pollingInterval=null;
-function startPolling(){
-  if(pollingInterval)return;
-  pollingInterval=setInterval(async ()=>{
-    if(!isSaving && !document.hidden){
-      try{ await loadFromSheets(true); }catch(e){}
-    }
-  },60000);
-}
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden) { clearInterval(pollingInterval); pollingInterval=null; }
-  else startPolling();
-});
-startPolling();
+setInterval(()=> { if(!isSaving && !document.hidden) loadFromSheets(true); }, 60000);
 </script>
 </body>
 </html>
