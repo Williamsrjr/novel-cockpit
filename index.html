@@ -38,7 +38,6 @@
 [data-theme="light"] .mob-label{color:#000;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR','Sora',sans-serif;background:var(--bg0);color:var(--fg);min-height:100vh;-webkit-font-smoothing:antialiased;}
-/* Dot grid background */
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(100,180,255,.07) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;z-index:0;}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 5%,rgba(0,238,255,.06),transparent 50%),radial-gradient(ellipse at 85% 90%,rgba(124,138,255,.04),transparent 50%);pointer-events:none;z-index:0;}
 .app{max-width:1140px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
@@ -55,7 +54,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border2);background:var(--glass2);color:var(--fg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s;}
 .icon-btn:hover{background:var(--bg3);color:var(--fg);border-color:var(--accent);box-shadow:0 0 12px var(--accent-glow);}
 
-/* Subtitle */
 .page-sub{font-size:14px;color:var(--fg3);margin-bottom:8px;}
 
 /* === NAV === */
@@ -69,7 +67,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .pill:hover{border-color:var(--fg4);}
 .pill.on{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:600;box-shadow:0 0 8px var(--accent-glow);}
 
-/* Legend */
 .legend{display:flex;gap:16px;margin-bottom:16px;font-size:10px;color:var(--fg4);align-items:center;flex-wrap:wrap;font-family:'Sora';font-weight:500;}
 .lg-i{display:flex;align-items:center;gap:5px;}
 .lg-d{width:14px;height:7px;border-radius:3px;}
@@ -83,10 +80,9 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .ov-t{width:100%;min-width:880px;border-collapse:collapse;}
 .ov-t thead th{font-family:'Sora';font-size:13px;color:#fff;font-weight:600;letter-spacing:-.01em;padding:10px 2px 8px;text-align:center;border-bottom:1px solid var(--border);background:rgba(10,16,30,.5);position:sticky;top:0;z-index:10;}
 .ov-t thead th:first-child{text-align:left;padding-left:22px;min-width:170px;width:170px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);}
-.ov-t thead th .si{display:none;}
-.ov-t tbody tr{border-bottom:1px solid var(--border);transition:all .2s;}
+.ov-t tbody tr{border-bottom:1px solid var(--border);transition:all .2s; cursor: grab;}
 .ov-t tbody tr:hover{background:rgba(0,238,255,.03);}
-.ov-t tbody tr:last-child{border-bottom:none;}
+.ov-t tbody tr:active{cursor: grabbing;}
 .ov-t td{padding:6px 2px;text-align:center;vertical-align:middle;}
 .ov-t td:first-child{text-align:left;padding-left:22px;}
 .ov-nm{font-size:14px;font-weight:700;color:var(--fg);cursor:pointer;transition:color .15s;text-decoration:none;display:inline-block;}
@@ -96,7 +92,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .ov-tag{font-size:9px;padding:2px 7px;border-radius:4px;background:var(--bg3);color:var(--fg3);font-weight:500;}
 .ov-start{font-size:9px;color:var(--fg4);margin-top:2px;font-family:'Sora';}
 
-/* Cells */
 .c{display:inline-flex;align-items:center;justify-content:center;width:84%;height:30px;border-radius:7px;cursor:pointer;position:relative;transition:all .2s;user-select:none;font-family:'Sora';}
 .c:hover{transform:scale(1.12);}
 .c.d.docs{background:var(--docs-bg);border:1px solid var(--docs-bd);}
@@ -113,7 +108,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .c.d.complete-done .cl{color:var(--accent);text-shadow:0 0 8px var(--accent-glow);}
 .c.p .cl{color:transparent;}
 .c.p.empty .cl{color:transparent;}
-/* Tooltip */
 .c-tip{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--bg1);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;font-size:11px;color:var(--fg);z-index:20;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.5);min-width:150px;max-width:230px;white-space:normal;line-height:1.5;backdrop-filter:blur(16px);}
 .c-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border2);}
 .c:hover .c-tip{display:block;}
@@ -130,7 +124,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .tip-no{color:var(--fg4);font-style:italic;}
 .c-due{position:absolute;top:-7px;right:-8px;font-size:7px;background:var(--bg4);color:var(--fg3);padding:1px 5px;border-radius:4px;font-weight:600;white-space:nowrap;}
 
-/* Urgency */
 @keyframes bl1{0%,100%{opacity:1}50%{opacity:.55}}
 @keyframes bl2{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes bl3{0%,100%{opacity:1}50%{opacity:.3}}
@@ -184,7 +177,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 
 /* === WORKS CARDS === */
 .cards-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
-.wk{background:var(--glass);backdrop-filter:blur(20px);border-radius:var(--card-r);padding:22px;border:1px solid var(--border2);transition:all .3s;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.15);}
+.wk{background:var(--glass);backdrop-filter:blur(20px);border-radius:var(--card-r);padding:22px;border:1px solid var(--border2);transition:all .3s;cursor:grab;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.15);}
+.wk:active{cursor:grabbing;}
 .wk:hover{border-color:rgba(0,238,255,.2);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.3),0 0 24px var(--accent-glow);}
 .wk::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
 .wk.t-docs::before{background:linear-gradient(90deg,var(--docs),transparent);}
@@ -340,7 +334,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .sdot.pending{background:var(--fg4);}
 .sdot.blocked{background:var(--blocked);}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:12px 24px;font-size:12px;color:var(--fg);z-index:999;box-shadow:0 12px 40px rgba(0,0,0,.4);animation:toast-in .3s ease,toast-out .3s ease 1.7s forwards;font-family:'Sora';font-weight:500;backdrop-filter:blur(12px);}
-/* Pub selector popup */
 .pub-sel{position:fixed;z-index:250;background:var(--bg1);border:1px solid var(--border2);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.5);backdrop-filter:blur(24px);animation:ctx-in .15s ease;}
 .pub-sel-title{font-family:'Sora';font-size:11px;color:var(--fg4);font-weight:600;padding:6px 10px 4px;text-transform:uppercase;letter-spacing:.04em;}
 .pub-sel-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--fg2);transition:all .12s;text-decoration:none;}
@@ -409,23 +402,11 @@ body.no-blink .u1,body.no-blink .u2,body.no-blink .u3,body.no-blink .uc{animatio
 const S=[{id:"ideation",l:"착상",i:"💡"},{id:"structure",l:"구조설계",i:"🏗"},{id:"story",l:"BG",i:"🧬"},{id:"scene_structure",l:"씬구조",i:"🎬"},{id:"scene_beat",l:"씬비트",i:"🥁"},{id:"draft",l:"초고",i:"✍️"},{id:"revision",l:"퇴고",i:"🔄"},{id:"complete",l:"교정교열",i:"✅"},{id:"publishing",l:"발행",i:"📡"}];
 const TAGS=["SF","문학","엽편","단편","중편","장편","야설","에로","판타지"];
 const TL={gdoc:'Docs',nc:'NC',gdrive:'Drive'};
-let N=[
-  {id:1,title:"5억년 버튼",tags:["SF","단편"],cs:"revision",len:"40매",sd:"2026-01-15",ed:"2026-04-15",dir:"https://drive.google.com/drive/folders/ex1",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"주관적 시간 체험",d:""},structure:{s:"done",n:"3막 확정",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"6씬",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"16,200자",d:""},revision:{s:"active",n:"2차 퇴고중",d:"2026-04-10"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"구조노트",d:"3막 & 씬",u:"#"},{i:"📂",n:"참고 논문",d:"시간지각",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-28"},
-  {id:2,title:"모르는척",tags:["문학","단편"],cs:"revision",len:"30매",sd:"2026-02-01",ed:"2026-04-30",dir:"https://drive.google.com/drive/folders/ex2",links:{gdoc:"#",gdrive:"#",nc:""},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"gdoc"},scene_beat:{u:"#",t:"gdoc"},draft:{u:"#",t:"gdoc"},revision:{u:"#",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"장례식장",d:""},structure:{s:"done",n:"K/M/O 비교",d:""},story:{s:"done",n:"",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"done",n:"Version K",d:""},revision:{s:"active",n:"문체 정제",d:"2026-04-20"},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"K/M/O 비교",d:"산문 비교",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-25"},
-  {id:3,title:"찔러보기",tags:["문학","중편","에로"],cs:"scene_structure",len:"60매",sd:"2026-01-20",ed:"2026-06-30",dir:"",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"Poke → 성적 코드화",d:""},structure:{s:"done",n:"4장 12씬",d:""},story:{s:"done",n:"DB 유출",d:""},scene_structure:{s:"active",n:"16K~18K자",d:"2026-04-05"},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"4장 구조도",d:"12씬 배치",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-20"},
-  {id:4,title:"역전의 남자들",tags:["문학","장편"],cs:"structure",len:"장편",sd:"2026-03-01",ed:"2027-03-01",dir:"",links:{gdoc:"",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdrive"},structure:{u:"#",t:"nc"},story:{u:"",t:""},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"모티프 맵",d:""},structure:{s:"active",n:"스타일 가이드",d:"2026-05-01"},story:{s:"pending",n:"",d:""},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"무진기행",d:"김승옥",u:"#"},{i:"📄",n:"무라카미",d:"A Slow Boat",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-15"},
-  {id:5,title:"백지와 거울",tags:["SF","장편"],cs:"story",len:"49씬",sd:"2025-11-01",ed:"2027-06-01",dir:"#",links:{gdoc:"#",gdrive:"#",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"",t:""},scene_beat:{u:"",t:""},draft:{u:"",t:""},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"진화적 취약성",d:""},structure:{s:"done",n:"4막 16장",d:""},story:{s:"active",n:"쌍둥이 시술",d:"2026-06-01"},scene_structure:{s:"pending",n:"",d:""},scene_beat:{s:"pending",n:"",d:""},draft:{s:"pending",n:"",d:""},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"49씬 구조",d:"NC 포맷",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-10"},
-  {id:6,title:"반찬가게",tags:["SF","문학","단편"],cs:"draft",len:"40매",sd:"2026-02-10",ed:"2026-05-15",dir:"#",links:{gdoc:"#",gdrive:"",nc:"#"},sl:{ideation:{u:"#",t:"gdoc"},structure:{u:"#",t:"gdoc"},story:{u:"#",t:"gdoc"},scene_structure:{u:"#",t:"nc"},scene_beat:{u:"#",t:"nc"},draft:{u:"#",t:"nc"},revision:{u:"",t:"nc"},complete:{u:"",t:""},publishing:{u:"",t:""}},st:{ideation:{s:"done",n:"세로토닌 BBB",d:""},structure:{s:"done",n:"에세이→르포",d:""},story:{s:"done",n:"은폐/착취",d:""},scene_structure:{s:"done",n:"",d:""},scene_beat:{s:"done",n:"",d:""},draft:{s:"active",n:"초고 집필중",d:"2026-04-03"},revision:{s:"pending",n:"",d:""},complete:{s:"pending",n:"",d:""},publishing:{s:"pending",n:"",d:""}},refs:[{i:"📄",n:"W-Method",d:"평화→Hard SF",u:"#"}],pubs:[{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""},{name:"",url:""}],up:"2026-03-22"},
-];
-// ===== Google Sheets Integration =====
+let N=[];
 const API_URL = 'https://script.google.com/macros/s/AKfycbxQ4CNeYPz6Mf4iFOaiopQcXy1kfWpImBPSDqjztTD3XdAJFWWWSpXKmev9Th1Zmf53/exec';
 const SHEETS_ENABLED = API_URL !== 'YOUR_APPS_SCRIPT_URL';
 
-const DEFAULT_N=JSON.parse(JSON.stringify(N));
-N=[]; // ✅ 시트 데이터 로드 전까지 빈 배열 (하드코딩 데이터 표시 방지)
-
-// Convert Sheets flat data → N[] format
-function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso[0];const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);} // ✅ 다양한 날짜 포맷 안전 처리
+function fmtD(v){if(!v||v==='NaN'||v==='undefined'||v==='null')return'';const s=String(v).trim();if(!s)return'';const iso=/^\d{4}-\d{2}-\d{2}/.exec(s);if(iso)return iso;const d=new Date(s);if(isNaN(d.getTime()))return'';return d.toISOString().slice(0,10);}
 function clV(v){return(!v||v==='NaN'||v==='undefined'||v==='null')?'':String(v);}
 function sheetsToN(data){
   const novels=data.novels.map(row=>({
@@ -434,7 +415,6 @@ function sheetsToN(data){
     links:{gdoc:clV(row.gdoc),gdrive:clV(row.gdrive),nc:clV(row.nc)},
     sl:{}, st:{}, refs:[], pubs:[], up:fmtD(row.up)
   }));
-  // Fill stages
   novels.forEach(n=>{
     S.forEach(s=>{n.sl[s.id]={u:'',t:''};n.st[s.id]={s:'pending',n:'',d:''};});
     data.stages.filter(s=>s.novelId===n.id).forEach(s=>{
@@ -448,7 +428,6 @@ function sheetsToN(data){
   return novels;
 }
 
-// Convert N[] → Sheets flat format
 function nToSheets(novels){
   const novelsFlat=novels.map(n=>({
     id:n.id,title:n.title,tags:n.tags,cs:n.cs,len:n.len,sd:n.sd,ed:n.ed,dir:n.dir,
@@ -469,7 +448,6 @@ function nToSheets(novels){
   return{novels:novelsFlat,stages,refs,pubs};
 }
 
-// Fetch from Sheets (async, updates after page load)
 let syncStatus='local';
 function updateSyncBadge(){
   const el=document.getElementById('sync-badge');
@@ -483,7 +461,7 @@ let isSaving=false;
 let hasLocalData=false;
 
 async function loadFromSheets(force){
-  if(!SHEETS_ENABLED||isSaving||pendingSave)return; // ✅ pendingSave 중에는 폴링 차단
+  if(!SHEETS_ENABLED||isSaving||pendingSave)return;
   if(hasLocalData&&!force)return;
   syncStatus='syncing';updateSyncBadge();
   try{
@@ -491,21 +469,15 @@ async function loadFromSheets(force){
     const data=await res.json();
     if(data.error){syncStatus='error';updateSyncBadge();return;}
     if(data.novels&&data.novels.length>0){
-      // 로컬 pubs 데이터 백업 (pendingSave 중에만 merge)
       const localPubs={};
       if(pendingSave){
         N.forEach(n=>{localPubs[n.id]=n.pubs||[];});
       }
-      
-      // Sheets 데이터로 N 업데이트
       const newN=sheetsToN(data);
-      // 유효성 검증 + 자동 복구
       newN.forEach(n=>{
         if(!S.some(s=>s.id===n.cs)){n.cs='ideation';}
       });
       N=newN;
-      
-      // pendingSave 중일 때만 로컬 pubs를 merge (아닐 때는 시트 데이터만 사용)
       N.forEach(n=>{
         if(pendingSave){
           const sheetsPubs=n.pubs||[];
@@ -520,8 +492,6 @@ async function loadFromSheets(force){
         }
         while(n.pubs.length<5)n.pubs.push({name:'',url:''});
       });
-      
-// localStorage 제거됨
       hasLocalData=true;
       R();syncStatus='synced';
     } else if(!hasLocalData){
@@ -549,15 +519,13 @@ async function saveToSheets(){
   updateSyncBadge();
 }
 
-// Debounced save
 let saveTimer=null;
-// ===== CRUD: Google Sheets 기반 =====
 let pendingSave=false;
 async function persist(){
   hasLocalData=true;
-  R(); // ✅ 즉시 UI 반영 (삭제/추가 결과를 바로 보여줌)
+  R();
   if(SHEETS_ENABLED){
-    pendingSave=true; // ✅ 폴링 차단 (레이스 컨디션 방지)
+    pendingSave=true;
     clearTimeout(saveTimer);
     saveTimer=setTimeout(async ()=>{
       try{
@@ -566,7 +534,6 @@ async function persist(){
         await loadFromSheets(true);
       }catch(e){
         pendingSave=false;
-        console.error('persist() 오류:', e);
         syncStatus='error';
         updateSyncBadge();
       }
@@ -576,7 +543,6 @@ async function persist(){
 async function manualSync(){if(!SHEETS_ENABLED){toast('Sheets URL이 설정되지 않았습니다');return;}toast('동기화 중…');await saveToSheets();await loadFromSheets(true);rSet();toast('동기화 완료');}
 
 let cv="overview",at=new Set(),ex=new Set(),dk=true,blinkOn=true,hideDone=false;
-// localStorage 제거됨
 if(!dk)document.documentElement.setAttribute('data-theme','light');
 const TD=new Date();
 
@@ -586,7 +552,7 @@ const dab=(a,b)=>Math.round((b-a)/864e5);
 function dli(n){const s=new Date(n.sd),e=new Date(n.ed),t=dab(s,e),el=dab(s,TD),r=dab(TD,e),p=Math.min(100,Math.max(0,Math.round((el/t)*100)));let st="ok";if(r<0)st="overdue";else if(p-gp(n)>20)st="warn";return{r,p,st};}
 function uc(d){if(!d)return'';const x=dab(TD,new Date(d));if(x<0)return'uc';if(x<=2)return'u3';if(x<=5)return'u2';if(x<=10)return'u1';return'';}
 function recomp(n){for(let i=0;i<S.length;i++){if(n.st[S[i].id].s==='active'){n.cs=S[i].id;return;}}let l='ideation';for(let i=0;i<S.length;i++){if(n.st[S[i].id].s==='done')l=S[i].id;else break;}n.cs=l;}
-function gf(){let r=N;if(hideDone)r=r.filter(n=>n.cs!=='complete'&&n.cs!=='publishing'||Object.values(n.st).some(s=>s.s!=='done'));if(at.size===0)return r;return r.filter(n=>[...at].some(t=>n.tags.includes(t)));}
+function gf(){let r=N;if(hideDone)r=r.filter(n=>n.cs!=='complete'&&n.cs!=='publishing'||Object.values(n.st).some(s=>s!=='done'));if(at.size===0)return r;return r.filter(n=>[...at].some(t=>n.tags.includes(t)));}
 function tt(t){if(at.has(t))at.delete(t);else at.add(t);rp();R();}
 function sv(v){cv=v;document.querySelectorAll('.nav-t').forEach(b=>b.classList.toggle('on',b.dataset.v===v));document.getElementById('ov-v').classList.toggle('hidden',v!=='overview');document.getElementById('wk-v').classList.toggle('hidden',v!=='works');R();}
 function rp(){document.getElementById('pills').innerHTML=TAGS.map(t=>`<button class="pill ${at.has(t)?'on':''}" onclick="tt('${t}')">${t}</button>`).join('');}
@@ -594,6 +560,43 @@ function togTheme(){dk=!dk;document.documentElement.setAttribute("data-theme",dk
 function togBlink(){blinkOn=!blinkOn;document.body.classList.toggle('no-blink',!blinkOn);rSet();}
 function togHideDone(){hideDone=!hideDone;R();rSet();}
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+
+// === 드래그 앤 드롭 로직 ===
+let draggedId = null;
+let dragType = null;
+
+function drag(e, id, type) {
+    draggedId = id;
+    dragType = type;
+    e.dataTransfer.effectAllowed = "move";
+    e.target.style.opacity = "0.5";
+}
+
+function allowDrop(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+}
+
+function drop(e, targetId, type) {
+    e.preventDefault();
+    if (draggedId === targetId || dragType !== type) return;
+
+    const draggedIdx = N.findIndex(x => x.id === draggedId);
+    const targetIdx = N.findIndex(x => x.id === targetId);
+
+    const [removed] = N.splice(draggedIdx, 1);
+    N.splice(targetIdx, 0, removed);
+
+    e.target.style.opacity = "1";
+    persist(); 
+    toast("작품 순서가 변경되었습니다.");
+}
+
+document.addEventListener("dragend", (e) => {
+    if (e.target.classList && (e.target.classList.contains('wk') || e.target.tagName === 'TR')) {
+        e.target.style.opacity = "1";
+    }
+}, false);
 
 // Context Menu
 let ctxNid=0,ctxSid='';
@@ -616,14 +619,11 @@ function ctxOpen(){hideCtx();window.open(N.find(x=>x.id===ctxNid).sl[ctxSid].u,'
 function ctxCopy(){hideCtx();navigator.clipboard.writeText(N.find(x=>x.id===ctxNid).sl[ctxSid].u).then(()=>toast('URL 복사됨')).catch(()=>toast('복사 실패'));}
 function ctxEdit(){hideCtx();cellDbl(null,ctxNid,ctxSid);}
 
-// Modals
 function showModal(h){document.getElementById('modal-bg').classList.remove('hidden');const m=document.getElementById('modal');m.classList.remove('hidden');m.innerHTML=h;}
 function closeModal(){document.getElementById('modal').classList.add('hidden');document.getElementById('modal-bg').classList.add('hidden');}
-
 function tagsCheckboxes(selected){return TAGS.map(t=>`<input type="checkbox" class="m-tag-cb" id="mt-${t}" value="${t}" ${selected.includes(t)?'checked':''}><label class="m-tag-label" for="mt-${t}">${t}</label>`).join('');}
 function getCheckedTags(){return TAGS.filter(t=>document.getElementById('mt-'+t)?.checked);}
 
-// Title click/dblclick
 let titleTimer=null;
 function handleTitle(e,nid){if(e)e.stopPropagation();if(titleTimer){clearTimeout(titleTimer);titleTimer=null;titleDbl(e,nid);return;}titleTimer=setTimeout(()=>{titleTimer=null;titleClick(nid);},300);}
 function titleClick(nid){const n=N.find(x=>x.id===nid);if(n.dir)window.open(n.dir,'_blank');else titleDbl(null,nid);}
@@ -633,7 +633,6 @@ function deleteNovel(nid){if(!confirm('이 작품을 삭제하시겠습니까?')
 function addNovel(){const today=new Date().toISOString().slice(0,10);showModal(`<h3>➕ 새 작품 추가</h3><div class="sub">새 프로젝트를 시작합니다</div><label>제목</label><input type="text" id="m-title" value="" placeholder="작품 제목"/><label>분류 태그</label><div class="m-tags-grid">${tagsCheckboxes([])}</div><label>분량</label><input type="text" id="m-len" value="" placeholder="40매, 장편 등"/><label>Google Drive 폴더 URL</label><input type="url" id="m-dir" value="" placeholder="https://drive.google.com/drive/folders/..."/><label>시작일</label><input type="date" id="m-sd" value="${today}"/><label>목표 완료일</label><input type="date" id="m-ed" value=""/><div class="m-btns"><button class="m-btn m-cancel" onclick="closeModal()">취소</button><button class="m-btn m-ok" onclick="saveNewNovel()">추가</button></div>`);}
 function saveNewNovel(){const title=document.getElementById('m-title').value;if(!title){toast('제목을 입력하세요');return;}const newId=N.length?Math.max(...N.map(x=>x.id))+1:1;const emptySt={};const emptySl={};S.forEach(s=>{emptySt[s.id]={s:'pending',n:'',d:''};emptySl[s.id]={u:'',t:''};});emptySt.ideation.s='active';const emptyPubs=[];for(let i=0;i<5;i++)emptyPubs.push({name:'',url:''});N.push({id:newId,title:title,tags:getCheckedTags(),cs:'ideation',len:document.getElementById('m-len').value||'',sd:document.getElementById('m-sd').value,ed:document.getElementById('m-ed').value,dir:document.getElementById('m-dir').value,links:{gdoc:'',gdrive:'',nc:''},sl:emptySl,st:emptySt,refs:[],pubs:emptyPubs,up:new Date().toISOString().slice(0,10)});closeModal();persist();toast(`"${title}" 추가됨`);}
 
-// Cell click/dblclick
 let cellTimer=null;
 function handleCell(e,nid,sid){if(e)e.stopPropagation();if(cellTimer){clearTimeout(cellTimer);cellTimer=null;cellDbl(e,nid,sid);return;}cellTimer=setTimeout(()=>{cellTimer=null;cellClick(e,nid,sid);},300);}
 function cellClick(e,nid,sid){
@@ -682,25 +681,11 @@ async function savePubEdit(nid){
   n.st.publishing.d=document.getElementById('m-due').value;
   recomp(n);
   closeModal();
-  hasLocalData=true;
-  R();
-  toast('저장 중…');
-  if(SHEETS_ENABLED){
-    pendingSave=true;
-    try{
-      await saveToSheets();
-      await loadFromSheets(true);
-      pendingSave=false;
-    }catch(e){
-      pendingSave=false;
-      syncStatus='error';updateSyncBadge();
-    }
-  }
-  toast(syncStatus==='synced'?'발행 정보 저장됨':'저장 오류 — 다시 시도해주세요');
+  persist();
+  toast('저장됨');
 }
 function saveCellEdit(nid,sid){const n=N.find(x=>x.id===nid);n.sl[sid].u=document.getElementById('m-url').value;n.sl[sid].t=document.querySelector('input[name="m-tool"]:checked').value;n.st[sid].d=document.getElementById('m-due').value;n.st[sid].s=document.getElementById('m-status').value;recomp(n);closeModal();persist();toast('저장됨');}
 
-// Settings
 function openSet(){document.getElementById('set-ov').classList.remove('hidden');document.body.style.overflow='hidden';rSet();}
 function closeSet(){document.getElementById('set-ov').classList.add('hidden');document.body.style.overflow='';}
 function tExp(id){if(ex.has(id))ex.delete(id);else ex.add(id);rSet();}
@@ -708,11 +693,10 @@ function uSS(nid,sid,v){N.find(x=>x.id===nid).st[sid].s=v;recomp(N.find(x=>x.id=
 function uSD(nid,sid,v){N.find(x=>x.id===nid).st[sid].d=v;persist();}
 function uND(nid,f,v){N.find(x=>x.id===nid)[f]=v;persist();rSet();}
 function rSet(){let h=`<div class="sp-h"><h2>⚙️ 관리</h2><button class="sp-x" onclick="closeSet()">✕</button></div><div class="sp-sec"><div class="sp-st">🎨 화면</div><div class="sp-row"><div><div class="sp-lbl">다크 모드</div></div><label class="tog"><input type="checkbox" ${dk?'checked':''} onchange="togTheme()"><span class="tog-s"></span></label></div></div><div class="sp-sec"><div class="sp-st">📋 작품 관리</div><table class="mt"><thead><tr><th>작품</th><th>현재</th><th>시작일</th><th>목표일</th><th></th></tr></thead><tbody>`;
-  N.forEach(n=>{const cs=S.find(x=>x.id===n.cs)||S[0];const isE=ex.has(n.id);h+=`<tr><td><span class="mt-t">${n.title}</span></td><td><span class="sdot ${n.st[n.cs].s}"></span> ${cs.l}</td><td><input type="date" class="mt-i" value="${n.sd}" onchange="uND(${n.id},'sd',this.value)"></td><td><input type="date" class="mt-i" value="${n.ed}" onchange="uND(${n.id},'ed',this.value)"></td><td><button class="eb" onclick="tExp(${n.id})">${isE?'접기':'▾'}</button></td></tr>`;if(isE){h+=`<tr><td colspan="5" style="padding:0 0 6px"><div class="se-w"><div class="se-r se-hd"><div>단계</div><div>상태</div><div>마감일</div></div>`;S.forEach(st=>{const info=n.st[st.id];h+=`<div class="se-r"><div class="se-n"><span class="sdot ${info.s}"></span>${st.i} ${st.l}</div><div><select class="se-sel" onchange="uSS(${n.id},'${st.id}',this.value)"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select></div><div><input type="date" class="se-di" value="${info.d||''}" onchange="uSD(${n.id},'${st.id}',this.value)"></div></div>`;});h+=`</div></td></tr>`;}});
-  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">☁️ Google Sheets 동기화</div><div class="sp-row"><div><div class="sp-lbl">상태</div><div class="sp-desc">${SHEETS_ENABLED?'연결됨 — '+API_URL.slice(0,50)+'…':'❌ 미설정 — HTML에서 API_URL을 설정하세요'}</div></div>${SHEETS_ENABLED?`<button class="m-btn m-ok" style="padding:6px 14px;font-size:12px" onclick="manualSync()">수동 동기화</button>`:''}</div></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" ${blinkOn?'checked':''} onchange="togBlink()"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox" ${hideDone?'checked':''} onchange="togHideDone()"><span class="tog-s"></span></label></div></div>`;
+  N.forEach(n=>{const cs=S.find(x=>x.id===n.cs)||S;const isE=ex.has(n.id);h+=`<tr><td><span class="mt-t">${n.title}</span></td><td><span class="sdot ${n.st[n.cs].s}"></span> ${cs.l}</td><td><input type="date" class="mt-i" value="${n.sd}" onchange="uND(${n.id},'sd',this.value)"></td><td><input type="date" class="mt-i" value="${n.ed}" onchange="uND(${n.id},'ed',this.value)"></td><td><button class="eb" onclick="tExp(${n.id})">${isE?'접기':'▾'}</button></td></tr>`;if(isE){h+=`<tr><td colspan="5" style="padding:0 0 6px"><div class="se-w"><div class="se-r se-hd"><div>단계</div><div>상태</div><div>마감일</div></div>`;S.forEach(st=>{const info=n.st[st.id];h+=`<div class="se-r"><div class="se-n"><span class="sdot ${info.s}"></span>${st.i} ${st.l}</div><div><select class="se-sel" onchange="uSS(${n.id},'${st.id}',this.value)"><option value="pending" ${info.s==='pending'?'selected':''}>대기</option><option value="active" ${info.s==='active'?'selected':''}>진행중</option><option value="done" ${info.s==='done'?'selected':''}>완료</option><option value="blocked" ${info.s==='blocked'?'selected':''}>막힘</option></select></div><div><input type="date" class="se-di" value="${info.d||''}" onchange="uSD(${n.id},'${st.id}',this.value)"></div></div>`;});h+=`</div></td></tr>`;}});
+  h+=`</tbody></table></div><div class="sp-sec"><div class="sp-st">☁️ Google Sheets 동기화</div><div class="sp-row"><div><div class="sp-lbl">상태</div><div class="sp-desc">${SHEETS_ENABLED?'연결됨 — '+API_URL.slice(0,50)+'…':'❌ 미설정'}</div></div>${SHEETS_ENABLED?`<button class="m-btn m-ok" style="padding:6px 14px;font-size:12px" onclick="manualSync()">수동 동기화</button>`:''}</div></div><div class="sp-sec"><div class="sp-st">🔧 기타</div><div class="sp-row"><div><div class="sp-lbl">마감 깜박임</div></div><label class="tog"><input type="checkbox" ${blinkOn?'checked':''} onchange="togBlink()"><span class="tog-s"></span></label></div><div class="sp-row"><div><div class="sp-lbl">완료 숨기기</div></div><label class="tog"><input type="checkbox" ${hideDone?'checked':''} onchange="togHideDone()"><span class="tog-s"></span></label></div></div>`;
   document.getElementById('set-p').innerHTML=h;}
 
-// Detail
 function showDet(id){const n=N.find(x=>x.id===id);document.getElementById('main-view').classList.add('hidden');const dv=document.getElementById('det-v');dv.classList.remove('hidden');
   let lk='';if(n.links.gdoc)lk+=`<a href="${n.links.gdoc}" target="_blank" class="d-lk docs">📄 Docs</a>`;if(n.links.gdrive)lk+=`<a href="${n.links.gdrive}" target="_blank" class="d-lk drive">📁 Drive</a>`;if(n.links.nc)lk+=`<a href="${n.links.nc}" target="_blank" class="d-lk nc">✒️ NC</a>`;
   let tl='';S.forEach((st,i)=>{const info=n.st[st.id];const isC=n.cs===st.id;const dc=info.s==='done'?'done':info.s==='blocked'?'blocked':isC?'active':'pending';const dot=info.s==='done'?'✓':info.s==='blocked'?'⊘':isC?st.i:(i+1);const lc=info.s==='done'?'done':'pending';const cc=isC?'as':info.s==='blocked'?'bs':info.s==='pending'?'ps':'';const stxt=info.s==='done'?'DONE':info.s==='active'?'진행중':info.s==='blocked'?'BLOCKED':'대기';const sl=n.sl[st.id];let tlk='';if(sl&&sl.u){const tc=sl.t==='nc'?'nc':'docs';tlk=`<a href="${sl.u}" target="_blank" class="tl-tl ${tc}">${sl.t==='nc'?'NC':'Docs'} →</a>`;}const dueI=info.d?` <span style="font-size:10px;color:var(--fg4);font-family:Sora">📅${info.d}</span>`:'';tl+=`<div class="tl-i"><div class="tl-l"><div class="tl-d ${dc}">${dot}</div>${i<S.length-1?`<div class="tl-ln ${lc}"></div>`:''}</div><div class="tl-b ${cc}"><div class="tl-r"><span class="n">${st.l} ${tlk}${dueI}</span><span class="st ${info.s}">${stxt}</span></div>${info.n?`<div class="tl-note">${info.n}</div>`:''}</div></div>`;});
@@ -720,90 +704,87 @@ function showDet(id){const n=N.find(x=>x.id===id);document.getElementById('main-
   dv.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start"><button class="back" onclick="hideDet()">← 돌아가기</button><button class="icon-btn" onclick="hideDet();titleDbl(null,${id})" title="편집" style="font-size:14px">✏️</button></div><div class="dt">${n.title}</div><div class="d-tags">${n.tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div><div class="d-meta"><span>분량 ${n.len}</span><span>시작 ${n.sd}</span><span>목표 ${n.ed}</span></div><div class="d-links">${lk}</div>${tl}${refs}`;}
 function hideDet(){document.getElementById('det-v').classList.add('hidden');document.getElementById('main-view').classList.remove('hidden');}
 
-// Tooltip
 function tipHtml(n,st,info){const statusLabels={done:'DONE',active:'진행중',pending:'대기',blocked:'BLOCKED'};let h=`<div class="tip-stage">${st.i} ${st.l}</div><div class="tip-status ${info.s}">${statusLabels[info.s]}</div>`;if(info.n)h+=`<div class="tip-memo">${info.n}</div>`;if(info.d){const days=dab(TD,new Date(info.d));const cls=days<0?'over':days<=5?'soon':'';const txt=days<0?`${Math.abs(days)}일 초과`:`${days}일 남음`;h+=`<div class="tip-due ${cls}">📅 ${info.d} (${txt})</div>`;}if(!info.n&&!info.d)h+=`<div class="tip-no">메모 없음</div>`;return h;}
 
-// Render
 function R(){
   const ns=gf();const ac=N.filter(n=>!["complete","publishing"].includes(n.cs)).length;
   document.getElementById('stats').textContent=`${N.length} projects · ${ac} active`;
 
-  // Desktop Overview
   let o=`<div class="glass-panel ov-wrap"><table class="ov-t"><thead><tr><th>작품</th>${S.map(s=>`<th>${s.l}</th>`).join('')}</tr></thead><tbody>`;
-  ns.forEach((n, idx)=>{let rU='';S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){const u=uc(info.d);if(u==='uc'||u==='u3')rU='row-over';}});const dl=dli(n);const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';const hasDir=!!n.dir;
-    o+=`<tr class="${rU}"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
-    S.forEach(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';const isE=!sl?.u&&!info.n;let cc='c ';if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}else if(info.s==='active')cc+=`a ${uc(info.d)}`;else if(info.s==='blocked')cc+='b';else cc+=`p${isE?' empty':''}`;let lb='';if(st.id==='complete'&&info.s==='done')lb='DONE';else if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';}else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCKED';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;});o+=`</tr>`;});
+  ns.forEach((n, idx)=>{
+    let rU='';
+    S.forEach(st=>{const info=n.st[st.id];if(info.s==='active'&&info.d){if(uc(info.d)==='uc'||uc(info.d)==='u3')rU='row-over';}});
+    const dl=dli(n);
+    const oB=dl.st==='overdue'?'<span class="over-badge">OVERDUE</span>':'';
+    const hasDir=!!n.dir;
+    o+=`<tr class="${rU}" draggable="true" ondragstart="drag(event, ${n.id}, 'row')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'row')"><td><span class="ov-nm ${hasDir?'has-link':''}" onclick="handleTitle(event,${n.id})">${idx+1}. ${n.title}</span>${oB}${n.sd?`<div class="ov-start">${n.sd} ~</div>`:''}<div class="ov-sub">${n.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div></td>`;
+    S.forEach(st=>{
+      const info=n.st[st.id];
+      const sl=n.sl[st.id];
+      const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';
+      const isE=!sl?.u&&!info.n;
+      let cc='c ';
+      if(info.s==='done'){if(st.id==='complete')cc+='d complete-done';else cc+=`d ${tc}${sl&&sl.u?' has-url':''}`;}
+      else if(info.s==='active')cc+=`a ${uc(info.d)}`;
+      else if(info.s==='blocked')cc+='b';
+      else cc+=`p${isE?' empty':''}`;
+      let lb='';
+      if(st.id==='complete'&&info.s==='done')lb='DONE';
+      else if(st.id==='publishing'){const pc=(n.pubs||[]).filter(p=>p.name&&p.url).length;if(info.s==='active')lb='NOW';else if(pc>0)lb=pc+'곳';}
+      else{if(info.s==='active')lb='NOW';else if(info.s==='blocked')lb='BLOCKED';else if(info.s==='done'&&sl&&sl.t)lb=TL[sl.t]||'';}
+      const dueTag=info.d?`<span class="c-due">📅${info.d.slice(5)}</span>`:'';
+      o+=`<td><div class="${cc}" onclick="handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')"><span class="cl">${lb}</span><div class="c-tip">${tipHtml(n,st,info)}</div>${dueTag}</div></td>`;
+    });
+    o+=`</tr>`;
+  });
   o+=`</tbody></table></div>`;
 
-  // Mobile Overview
   let mo='<div class="mob-ov">';
-  ns.forEach((n, idx)=>{const dl=dli(n);const cs=S.find(x=>x.id===n.cs)||S[0];const hasDir=!!n.dir;const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
-    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';const mIsE=!sl?.u&&!info.n;if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+=`p${mIsE?' empty':''}`;const lb=st.id==='complete'&&info.s==='done'?'DONE':info.s==='active'?'NOW':info.s==='blocked'?'BLOCKED':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;}).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
+  ns.forEach((n, idx)=>{
+    const dl=dli(n);
+    const cs=S.find(x=>x.id===n.cs)||S;
+    const dlTxt=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;
+    const aD=n.st[n.cs]?.d||'';
+    const uCls=uc(aD);
+    let btns='';
+    if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;
+    if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;
+    if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;
+    mo+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div><div class="mob-bar-wrap"><div class="mob-labels">${S.map(s=>`<div class="mob-label">${s.l}</div>`).join('')}</div><div class="mob-bar">${S.map(st=>{
+      const info=n.st[st.id];const sl=n.sl[st.id];const tc=sl&&sl.t==='nc'?'nc':sl&&(sl.t==='gdoc'||sl.t==='gdrive')?'docs':'none';let sc='mob-seg ';if(info.s==='done'){if(st.id==='complete')sc+='d complete-done';else sc+=`d ${tc}`;}else if(info.s==='active')sc+='a';else if(info.s==='blocked')sc+='b';else sc+=`p${!sl?.u&&!info.n?' empty':''}`;const lb=st.id==='complete'&&info.s==='done'?'DONE':info.s==='active'?'NOW':info.s==='blocked'?'BLOCKED':info.s==='done'&&sl&&sl.t?(TL[sl.t]||''):'';
+      return `<div class="${sc}" onclick="event.stopPropagation();handleCell(event,${n.id},'${st.id}')" oncontextmenu="showCtx(event,${n.id},'${st.id}')">${lb}</div>`;
+    }).join('')}</div></div><div class="mob-info"><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlTxt}</div></div><div><span class="k">진행</span><div class="v">${gp(n)}%</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div></div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;
+  });
   mo+='</div>';
   document.getElementById('ov-v').innerHTML=o+mo;
 
-  // Desktop Works
   let w=`<div class="sec-title">진행 상세 분석</div><div class="cards-grid">`;
-  ns.forEach((n, idx)=>{const prog=gp(n);const cs=S.find(x=>x.id===n.cs)||S[0];const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const note=n.st[n.cs]?.n||'';const dl=dli(n);const dlC=dl.st==='overdue'?'var(--danger)':dl.st==='warn'?'var(--warn)':'var(--done)';const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const rC=n.refs?n.refs.length:0;const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="wk-btn docs" onclick="event.stopPropagation()">📄 Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">📁 Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">✒️ NC</a>`;if(rC)btns+=`<span class="wk-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎 ${rC}</span>`;const dueI=aD?`<div class="wk-gi"><span class="wk-gl">현 단계 마감</span><span class="wk-gv ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</span></div>`:'';
-    w+=`<div class="wk ${tC} ${uCls}" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>전척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">시작일</span><span class="wk-gv">${n.sd}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dlT}</span></div>${dueI}</div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--fg4);margin-bottom:3px;font-family:Sora"><span>일정</span><span style="color:${dlC}">${dl.p}%</span></div><div class="dl-bar"><div class="dl-fill" style="width:${dl.p}%;background:${dlC}"></div></div></div><div class="wk-btns">${btns}</div></div>`;});
+  ns.forEach((n, idx)=>{
+    const prog=gp(n);const cs=S.find(x=>x.id===n.cs)||S;const ci=si(n.cs);const dW=Math.round((ci/S.length)*100);const aW=Math.round((1/S.length)*100);const dl=dli(n);const note=n.st[n.cs]?.n||'';const sl=n.sl[n.cs];const tC=sl&&sl.t==='nc'?'t-nc':'t-docs';const aD=n.st[n.cs]?.d||'';
+    let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="wk-btn docs" onclick="event.stopPropagation()">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="wk-btn drive" onclick="event.stopPropagation()">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="wk-btn nc" onclick="event.stopPropagation()">NC</a>`;
+    w+=`<div class="wk ${tC} ${uc(aD)}" draggable="true" ondragstart="drag(event, ${n.id}, 'card')" ondragover="allowDrop(event)" ondrop="drop(event, ${n.id}, 'card')" onclick="showDet(${n.id})"><div class="wk-top"><div class="wk-t ${!!n.dir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</div><div class="wk-bdg">${cs.i} ${cs.l}</div></div><div class="wk-tags">${n.tags.map(t=>`<span class="wk-tag">${t}</span>`).join('')}</div><div class="wk-prog"><div class="wk-prog-bar"><div class="wk-pg-d" style="width:${dW}%"></div><div class="wk-pg-a" style="width:${aW}%"></div></div><div class="wk-prog-info"><span>진척도 ${prog}%</span><span>일정 ${dl.p}%</span></div></div>${note?`<div class="wk-note">${note}</div>`:''}<div class="wk-grid"><div class="wk-gi"><span class="wk-gl">분량</span><span class="wk-gv">${n.len}</span></div><div class="wk-gi"><span class="wk-gl">목표</span><span class="wk-gv">${n.ed}</span></div><div class="wk-gi"><span class="wk-gl">남은 기간</span><span class="wk-gv ${dl.st}">${dl.r}일</span></div>${aD?`<div class="wk-gi"><span class="wk-gl">마감</span><span class="wk-gv">${aD}</span></div>`:''}</div><div class="wk-btns">${btns}</div></div>`;
+  });
   w+='</div>';
-
-  // Mobile Works
-  let mw='<div class="mob-works">';
-  ns.forEach((n, idx)=>{const cs=S.find(x=>x.id===n.cs)||S[0];const dl=dli(n);const aD=n.st[n.cs]?.d||'';const uCls=uc(aD);const hasDir=!!n.dir;const dlT=dl.r<0?`${Math.abs(dl.r)}일 초과`:`${dl.r}일 남음`;const note=n.st[n.cs]?.n||'';let btns='';if(n.links.gdoc)btns+=`<a href="${n.links.gdoc}" target="_blank" class="mob-btn docs">Docs</a>`;if(n.links.gdrive)btns+=`<a href="${n.links.gdrive}" target="_blank" class="mob-btn drive">Drive</a>`;if(n.links.nc)btns+=`<a href="${n.links.nc}" target="_blank" class="mob-btn nc">NC</a>`;if(n.refs&&n.refs.length)btns+=`<span class="mob-btn ref" onclick="event.stopPropagation();showDet(${n.id})">📎${n.refs.length}</span>`;
-    mw+=`<div class="mob-card ${uCls}" onclick="showDet(${n.id})"><div class="mob-top"><span class="mob-title ${hasDir?'has-link':''}" onclick="event.stopPropagation();handleTitle(event,${n.id})">${idx+1}. ${n.title}</span><span class="mob-badge">${cs.i} ${cs.l}</span></div><div class="mob-tags">${n.tags.map(t=>`<span class="mob-tag">${t}</span>`).join('')}</div>${note?`<div class="wk-note" style="font-size:11px;padding:8px 10px;margin-bottom:8px">${note}</div>`:''}<div class="mob-info"><div><span class="k">진행</span><div class="v">${gp(n)}% · 일정 ${dl.p}%</div></div><div><span class="k">남은 기간</span><div class="v ${dl.st}">${dlT}</div></div><div><span class="k">분량</span><div class="v">${n.len}</div></div>${aD?`<div><span class="k">마감</span><div class="v ${dab(TD,new Date(aD))<0?'overdue':dab(TD,new Date(aD))<=5?'warn':'ok'}">${aD}</div></div>`:''}</div><div class="mob-btns" onclick="event.stopPropagation()">${btns}</div></div>`;});
-  mw+='</div>';
-  document.getElementById('wk-v').innerHTML=w+mw;
+  document.getElementById('wk-v').innerHTML=w;
 }
 
-rp();R();
-if(!dk)document.getElementById('thbtn').textContent='☀️';
+rp();
+loadFromSheets(true);
 updateSyncBadge();
-// ✅ Google Sheets에서 데이터 로드 (초기 렌더링은 loadFromSheets 내에서 R()로 수행)
-loadFromSheets(true).then(()=>{
-  if(N.length===0){
-    // Sheets 연결 실패 시 기본 데이터 로드
-    N=JSON.parse(JSON.stringify(DEFAULT_N));
-    R();
-    toast('오프라인 모드: 기본 데이터 표시');
-  }
-});
 
-// ===== 자동 폴링: 10초 주기 (Visibility API 포함) =====
 let pollingInterval=null;
-
 function startPolling(){
   if(pollingInterval)return;
   pollingInterval=setInterval(async ()=>{
     if(!isSaving && !document.hidden){
-      try{
-        await loadFromSheets(true);
-      }catch(e){
-        console.warn('폴링 중 오류:', e);
-      }
+      try{ await loadFromSheets(true); }catch(e){}
     }
-  },60000);  // 10초 주기
-  syncStatus='synced';updateSyncBadge();
+  },60000);
 }
-
-function stopPolling(){
-  if(pollingInterval){
-    clearInterval(pollingInterval);
-    pollingInterval=null;
-  }
-}
-
-// 탭 전환 감지 (Visibility API)
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){
-    stopPolling();  // 백그라운드: 폴링 중지
-    syncStatus='local';updateSyncBadge();
-  }else{
-    startPolling();  // 포그라운드: 폴링 재개
-  }
+  if(document.hidden) { clearInterval(pollingInterval); pollingInterval=null; }
+  else startPolling();
 });
-
-// 초기 폴링 시작
 startPolling();
 </script>
 </body>
